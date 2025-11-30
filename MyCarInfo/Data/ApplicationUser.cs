@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MyCarInfo.Models;
 
 namespace MyCarInfo.Data
 {

@@ -1,6 +1,4 @@
-﻿using MyCarInfo.Data;
-
-namespace MyCarInfo.Models
+﻿namespace MyCarInfo.Data
 {
     public class Vehicle
     {

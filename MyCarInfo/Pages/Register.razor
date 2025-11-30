@@ -1,0 +1,45 @@
+﻿@page "/register"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Register</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="registerModel" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <input class="form-control" placeholder="Username" @bind="registerModel.Username" />
+    <input class="form-control" placeholder="Email" @bind="registerModel.Email" />
+    <input class="form-control" placeholder="Phone Number" @bind="registerModel.PhoneNumber" />
+    <input class="form-control" placeholder="First Name" @bind="registerModel.FirstName" />
+    <input class="form-control" placeholder="Last Name" @bind="registerModel.LastName" />
+    <input class="form-control" placeholder="Age" type="number" @bind="registerModel.Age" />
+
+    <input class="form-control" placeholder="Password" type="password" @bind="registerModel.Password" />
+    <input class="form-control" placeholder="Confirm Password" type="password" @bind="registerModel.ConfirmPassword" />
+
+    <button class="btn btn-primary" type="submit">Register</button>
+</EditForm>
+
+@code {
+    RegisterModel registerModel = new();
+    string errorMessage;
+
+    private async Task HandleRegister()
+    {
+        var result = await AuthService.RegisterAsync(registerModel);
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/login");
+    }
+}

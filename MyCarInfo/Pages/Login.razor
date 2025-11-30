@@ -1,0 +1,38 @@
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <input class="form-control" placeholder="Username" @bind="loginModel.Username" />
+    <input class="form-control" placeholder="Password" type="password" @bind="loginModel.Password" />
+
+    <button class="btn btn-primary" type="submit">Login</button>
+</EditForm>
+
+@code {
+    LoginModel loginModel = new();
+    string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthService.LoginAsync(loginModel);
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/");
+    }
+}
