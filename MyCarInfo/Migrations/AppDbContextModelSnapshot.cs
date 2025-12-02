@@ -234,7 +234,7 @@ namespace MyCarInfo.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MyCarInfo.Models.Vehicle", b =>
+            modelBuilder.Entity("MyCarInfo.Data.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,7 +277,7 @@ namespace MyCarInfo.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vehicles");
+                    b.ToTable("Cars");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -331,10 +331,10 @@ namespace MyCarInfo.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyCarInfo.Models.Vehicle", b =>
+            modelBuilder.Entity("MyCarInfo.Data.Vehicle", b =>
                 {
                     b.HasOne("MyCarInfo.Data.ApplicationUser", "User")
-                        .WithMany("Vehicles")
+                        .WithMany("Cars")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -344,7 +344,7 @@ namespace MyCarInfo.Migrations
 
             modelBuilder.Entity("MyCarInfo.Data.ApplicationUser", b =>
                 {
-                    b.Navigation("Vehicles");
+                    b.Navigation("Cars");
                 });
 #pragma warning restore 612, 618
         }

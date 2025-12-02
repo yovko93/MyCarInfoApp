@@ -8,6 +8,6 @@ namespace MyCarInfo.Data
         public string LastName { get; set; }
         public int Age { get; set; }
 
-        public List<Vehicle> Vehicles { get; set; } = new();
+        public List<Vehicle> Cars { get; set; } = new();
     }
 }

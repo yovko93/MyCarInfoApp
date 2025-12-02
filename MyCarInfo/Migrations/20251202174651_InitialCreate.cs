@@ -162,7 +162,7 @@ namespace MyCarInfo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicles",
+                name: "Cars",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -179,9 +179,9 @@ namespace MyCarInfo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicles", x => x.Id);
+                    table.PrimaryKey("PK_Cars", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vehicles_AspNetUsers_UserId",
+                        name: "FK_Cars_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -228,8 +228,8 @@ namespace MyCarInfo.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_UserId",
-                table: "Vehicles",
+                name: "IX_Cars_UserId",
+                table: "Cars",
                 column: "UserId");
         }
 
@@ -252,7 +252,7 @@ namespace MyCarInfo.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "Cars");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
