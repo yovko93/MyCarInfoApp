@@ -1,4 +1,5 @@
 ﻿using MyCarInfo.Data;
+using MyCarInfo.Models;
 
 namespace MyCarInfo.Services.Car
 {
@@ -7,8 +8,8 @@ namespace MyCarInfo.Services.Car
         Task<int> GetCarsCountAsync();
         Task<List<Vehicle>> GetAllCarsAsync();
         Task<Vehicle?> GetCarByIdAsync(int id);
-        Task AddCarAsync(Vehicle car);
-        Task UpdateCarAsync(Vehicle car);
+        Task AddCarAsync(CarModel carModel);
+        Task UpdateCarAsync(CarModel carModel);
         Task DeleteCarAsync(int id);
     }
 }

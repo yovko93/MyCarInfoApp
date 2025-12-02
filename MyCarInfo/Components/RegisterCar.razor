@@ -1,0 +1,140 @@
+﻿@page "/register-car"
+
+@using MyCarInfo.Models
+@inject ICarService CarService
+@inject NavigationManager Navigation
+
+<PageTitle>Register Car</PageTitle>
+
+<section class="about section">
+    <div class="container">
+        <h2 class="section__title">Регистрирай своя автомобил</h2>
+
+        <EditForm Model="@carModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="grid two-columns">
+
+                <div class="input__group">
+                    <label class="input__label">Марка</label>
+                    <InputText class="input__field" @bind-Value="carModel.Brand" />
+                    <ValidationMessage For="@(() => carModel.Brand)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Модел</label>
+                    <InputText class="input__field" @bind-Value="carModel.Model" />
+                    <ValidationMessage For="@(() => carModel.Model)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Регистрационен номер</label>
+                    <InputText class="input__field" @bind-Value="carModel.LicensePlate" />
+                    <ValidationMessage For="@(() => carModel.LicensePlate)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Двигател</label>
+                    <InputText class="input__field" @bind-Value="carModel.Engine" />
+                    <ValidationMessage For="@(() => carModel.Engine)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Конски сили</label>
+                    <InputNumber class="input__field" @bind-Value="carModel.HorsePower" />
+                    <ValidationMessage For="@(() => carModel.HorsePower)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Гражданска отговорност</label>
+                    <InputDate class="input__field date-input" @bind-Value="carModel.InsuranceExpiryDate" />
+                    @* <i class="ri-calendar-line calendar-icon"></i> *@
+                    <ValidationMessage For="@(() => carModel.InsuranceExpiryDate)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Годишен технически преглед</label>
+                    <InputDate class="input__field date-input" @bind-Value="carModel.InspectionExpiryDate" />
+                    <ValidationMessage For="@(() => carModel.InspectionExpiryDate)" />
+                </div>
+                <div class="input__group">
+                    <label class="input__label">Винетка валидна до</label>
+                    <InputDate class="input__field date-input" @bind-Value="carModel.VignetteExpiryDate" />
+                    <ValidationMessage For="@(() => carModel.VignetteExpiryDate)" />
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="button" disabled="@isLoading">
+                    @(isLoading ? "Запазване..." : "Запази")
+                </button>
+            </div>
+
+        </EditForm>
+
+        @if (successMessage != null)
+        {
+            <div class="alert alert-success mt-3">
+                @successMessage
+            </div>
+        }
+
+    </div>
+</section>
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success mt-3">
+        @successMessage
+    </div>
+}
+
+@code {
+    private bool isLoading = false;
+    private string? successMessage;
+
+    private CarModel carModel = new()
+        {
+            InsuranceExpiryDate = DateTime.Today,
+            InspectionExpiryDate = DateTime.Today,
+            VignetteExpiryDate = DateTime.Today
+        };
+
+    private async Task HandleValidSubmit()
+    {
+        isLoading = true;
+        await CarService.AddCarAsync(carModel);
+        successMessage = "Автомобилът е регистриран успешно!";
+
+        // Redirect after 1.5 seconds
+        await Task.Delay(1500);
+        Navigation.NavigateTo("/");
+    }
+}
+
+<style>
+    .input__group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+    }
+
+    .input__label {
+        font-size: 14px;
+        margin-bottom: .25rem;
+        font-weight: 500;
+    }
+
+    .input__field {
+        padding: 12px 15px;
+        border: 1px solid var(--text-color-light);
+        border-radius: 10px;
+        background-color: var(--container-color);
+        color: var(--text-color);
+    }
+
+        .input__field:focus {
+            outline: none;
+            border-color: var(--first-color);
+        }
+
+    .grid.two-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+</style>
