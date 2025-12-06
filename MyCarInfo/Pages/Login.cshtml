@@ -1,179 +1,75 @@
-﻿@page "/Login"
+﻿@page "/login"
 @model MyCarInfo.Pages.LoginModel
 
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Login";
 }
 
-<section class="login__section">
-    <div class="container">
-        <form method="post" class="login__form">
-            @Html.AntiForgeryToken()
+<section class="section auth">
+    <div class="container auth__container grid">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-4"></div>
+        <div class="auth__intro">
+            <p class="section__title">Добре дошъл обратно</p>
+            <h2 class="auth__headline">Влез в своя MyCarInfo акаунт</h2>
+            <p class="auth__description">
+                Достъпи таблото си, прегледай гаража и получавай напомняния за важни срокове и поддръжки. Всичко е
+                подредено, за да следиш автомобила си без усилие.
+            </p>
+        </div>
 
-            <!-- Username -->
-            <div class="login__field mb-4">
-                <label asp-for="Input.Username" class="login__label">Потребителско име</label>
-                <div class="login__input-wrapper">
-                    <input name="Input.Username" class="login__input" autocomplete="username" aria-required="true" placeholder="Въведи потребителско име" />
-                    <i class="bx bx-user login__icon"></i>
+        <div class="auth__card">
+            <form method="post" class="auth__form">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @if (Model.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger auth__alert">@Model.ErrorMessage</div>
+                }
+
+                <div class="auth__grid">
+                    <div class="auth__field">
+                        <label asp-for="Input.Username">Потребителско име</label>
+                        <input name="Input.Username" class="auth__input" autocomplete="username" aria-required="true" placeholder="Въведи потребителско име" />
+                        <span asp-validation-for="Input.Username" class="text-danger"></span>
+                    </div>
+
+                    <div class="auth__field">
+                        <label asp-for="Input.Password">Парола</label>
+                        <input name="Input.Password" type="password" class="auth__input" autocomplete="current-password" aria-required="true" placeholder="Въведи парола" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="Input.Username" class="text-danger"></span>
-            </div>
 
-            <!-- Password -->
-            <div class="login__field mb-5">
-                <label asp-for="Input.Password" class="login__label">Парола</label>
-                <div class="login__input-wrapper">
-                    <input name="Input.Password" type="password" class="login__input" autocomplete="current-password" aria-required="true" placeholder="Въведи парола" />
-                    <i class="bx bx-lock-alt login__icon"></i>
+                <button type="submit" class="button auth__submit">Вход</button>
+
+                <div class="auth__actions">
+                    <a href="/" class="button auth__home">
+                        <i class="ri-home-5-line"></i>
+                        Към началната страница
+                    </a>
                 </div>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="login__button button">
-                <span>Login</span>
-                <i class="bx bx-log-in-circle"></i>
-            </button>
-        </form>
+                <p class="auth__footer">
+                    Нямаш акаунт?
+                    <a href="/register" class="auth__link">Регистрирай се тук</a>.
+                </p>
+            </form>
+        </div>
+
+        <div class="auth__intro">
+            <div class="auth__highlights">
+                <div class="auth__highlight">
+                    <i class="ri-shield-keyhole-line"></i>
+                    Сигурен достъп до всички данни за автомобила ти.
+                </div>
+                <div class="auth__highlight">
+                    <i class="ri-notification-3-line"></i>
+                    Получавай известия преди изтичане на документи и обслужвания.
+                </div>
+            </div>
+        </div>
     </div>
 </section>
-
-@if (Model.ErrorMessage != null)
-{
-    <div class="alert alert-danger">@Model.ErrorMessage</div>
-}
-
-<style>
-    /*=============== LOGIN FORM STYLING ===============*/
-    .login__field {
-        margin: 3%;
-    }
-
-    .login__form {
-        position: relative;
-        background-color: hsl(239.44deg 17.63% 45.43% / 12%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid hsla(219, 69%, 56%, .2);
-        border-radius: 1.5rem;
-        padding: 3rem 2rem;
-        max-width: 420px;
-        margin: 4rem auto;
-        box-shadow: 0 8px 32px hsla(0, 0%, 0%, .4);
-        z-index: 10;
-        overflow: hidden;
-    }
-
-        .login__form::before {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(180deg, var(--first-color), transparent);
-            border-radius: 50%;
-            filter: blur(120px);
-            top: -100px;
-            left: -100px;
-            opacity: .4;
-            z-index: -1;
-        }
-
-        .login__form::after {
-            content: '';
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(45deg, hsl(158, 89%, 40%), transparent);
-            border-radius: 50%;
-            filter: blur(100px);
-            bottom: -80px;
-            right: -80px;
-            opacity: .3;
-            z-index: -1;
-        }
-
-    .login__label {
-        display: block;
-        color: var(--title-color);
-        font-size: var(--normal-font-size);
-        font-weight: var(--font-semi-bold);
-        margin-bottom: .5rem;
-    }
-
-    .login__input-wrapper {
-        position: relative;
-    }
-
-    .login__input {
-        width: 100%;
-        background-color: hsla(0, 0%, 100%, .08);
-        border: 1.5px solid hsla(219, 69%, 56%, .3);
-        color: var(--text-color);
-        font-family: var(--body-font);
-        font-size: var(--normal-font-size);
-        padding: .9rem 1rem .9rem 2.8rem;
-        border-radius: .75rem;
-        outline: none;
-        transition: all .3s ease;
-    }
-
-        .login__input:focus {
-            border-color: var(--first-color);
-            background-color: hsla(0, 0%, 100%, .12);
-            box-shadow: 0 0 12px hsla(219, 69%, 56%, .4);
-        }
-
-    .login__icon {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--first-color);
-        font-size: 1.25rem;
-        pointer-events: none;
-    }
-
-    /* Custom Button (reuses your .button class but with extra flair) */
-    .login__button {
-        width: 100%;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-        font-weight: var(--font-semi-bold);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-block: 5%;
-        height: 30px;
-    }
-
-        .login__button i {
-            margin-left: .5rem;
-            font-size: 1.3rem;
-            transition: transform .3s ease;
-        }
-
-        .login__button:hover i {
-            transform: translateX(4px);
-        }
-
-        .login__button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, hsla(219, 69%, 66%, .3), transparent);
-            transition: .6s;
-            z-index: -1;
-        }
-
-        .login__button:hover::before {
-            left: 100%;
-        }
-
-</style>

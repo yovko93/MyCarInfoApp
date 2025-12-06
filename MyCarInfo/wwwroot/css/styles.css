@@ -1310,6 +1310,28 @@ transform: scale(1.2);
     letter-spacing: .5px;
 }
 
+.auth__actions {
+    margin: 0rem 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+.auth__home {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    background-color: transparent;
+    color: var(--first-color);
+    border: 1px solid var(--first-color);
+}
+
+    .auth__home:hover {
+        background-color: hsla(219, 69%, 56%, .08);
+        color: var(--first-color);
+    }
+
 .auth__footer {
     margin: 0;
     text-align: center;

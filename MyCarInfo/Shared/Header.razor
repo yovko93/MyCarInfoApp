@@ -49,9 +49,6 @@
     {
         await AuthService.LogoutAsync();
 
-        if (AuthStateProvider is CustomAuthStateProvider customProvider)
-            customProvider.NotifyStateChanged();
-
         NavigationManager.NavigateTo("/");
     }
 }
