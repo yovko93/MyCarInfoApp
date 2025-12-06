@@ -2,33 +2,87 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-<h3>Register</h3>
+<section class="section auth">
+    <div class="container auth__container grid">
+        <div class="auth__intro">
+            <p class="section__title">Създай своя акаунт</p>
+            <h2 class="auth__headline">Присъедини се към общността на MyCarInfo</h2>
+            <p class="auth__description">
+                Изгради своя гараж, проследявай любимите си продукти и получавай персонализирани препоръки
+                със сигурен профил, съобразен с твоите нужди. Приложение, което известява потребителя по Viber преди изтичане срока на документите на автомобила.
+            </p>
+        </div>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
+        <div class="auth__card">
+            <EditForm Model="registerModel" OnValidSubmit="HandleRegister" class="auth__form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger auth__alert">@errorMessage</div>
+                }
+                <div class="auth__grid">
+                    <div class="auth__field">
+                        <label for="username">Потребителско име</label>
+                        <InputText id="username" class="auth__input" placeholder="Потребителско име" @bind-Value="registerModel.Username" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="email">Имейл</label>
+                        <InputText id="email" type="email" class="auth__input" placeholder="Имейл" @bind-Value="registerModel.Email" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="phone">Телефонен номер</label>
+                        <InputText id="phone" class="auth__input" placeholder="Телефонен номер" @bind-Value="registerModel.PhoneNumber" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="age">Възраст</label>
+                        <InputNumber id="age" class="auth__input" placeholder="Възраст" @bind-Value="registerModel.Age" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="firstName">Име</label>
+                        <InputText id="firstName" class="auth__input" placeholder="Име" @bind-Value="registerModel.FirstName" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="lastName">Фамилия</label>
+                        <InputText id="lastName" class="auth__input" placeholder="Фамилия" @bind-Value="registerModel.LastName" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="password">Парола</label>
+                        <InputText id="password" type="password" class="auth__input" placeholder="Парола" @bind-Value="registerModel.Password" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="confirmPassword">Потвърди паролата</label>
+                        <InputText id="confirmPassword" type="password" class="auth__input" placeholder="Потвърди паролата" @bind-Value="registerModel.ConfirmPassword" />
+                    </div>
+                </div>
+                <button class="button auth__submit" type="submit">Създай акаунт</button>
+                <p class="auth__footer">Вече имаш регистрация? <NavLink href="/login" class="auth__link">Влез оттук</NavLink>.</p>
+            </EditForm>
+        </div>
 
-<EditForm Model="registerModel" OnValidSubmit="HandleRegister">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <div class="auth__intro">
+            <div class="auth__highlights">
+                <div class="auth__highlight">
+                    <i class="ri-shield-check-line"></i>
+                    Сигурна автентикация и защита на твоите данни.
+                </div>
+                <div class="auth__highlight">
+                    <i class="ri-speed-up-line"></i>
+                    Бърза регистрация с проверка в реално време.
+                </div>
+                <div class="auth__highlight">
+                    <i class="ri-star-line"></i>
+                    Персонализирано изживяване за всеки шофьор.
+                </div>
+            </div>
+        </div>
 
-    <input class="form-control" placeholder="Username" @bind="registerModel.Username" />
-    <input class="form-control" placeholder="Email" @bind="registerModel.Email" />
-    <input class="form-control" placeholder="Phone Number" @bind="registerModel.PhoneNumber" />
-    <input class="form-control" placeholder="First Name" @bind="registerModel.FirstName" />
-    <input class="form-control" placeholder="Last Name" @bind="registerModel.LastName" />
-    <input class="form-control" placeholder="Age" type="number" @bind="registerModel.Age" />
-
-    <input class="form-control" placeholder="Password" type="password" @bind="registerModel.Password" />
-    <input class="form-control" placeholder="Confirm Password" type="password" @bind="registerModel.ConfirmPassword" />
-
-    <button class="btn btn-primary" type="submit">Register</button>
-</EditForm>
+    </div>
+</section>
 
 @code {
     RegisterModel registerModel = new();
-    string errorMessage;
+    string errorMessage = string.Empty;
 
     private async Task HandleRegister()
     {

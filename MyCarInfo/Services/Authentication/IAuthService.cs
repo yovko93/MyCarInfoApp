@@ -6,7 +6,6 @@
     public interface IAuthService
     {
         Task<Result> RegisterAsync(RegisterModel model);
-        Task<Result> LoginAsync(LoginModel model);
         Task LogoutAsync();
     }
 }

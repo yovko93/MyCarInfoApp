@@ -20,7 +20,7 @@ namespace MyCarInfo.Services.Authentication
         public async Task<Result> RegisterAsync(RegisterModel model)
         {
             if (model.Password != model.ConfirmPassword)
-                return new Result { Succeeded = false, Error = "Passwords do not match." };
+                return new Result { Succeeded = false, Error = "Паролата не съвпада." };
 
             var user = new ApplicationUser
             {
@@ -39,22 +39,6 @@ namespace MyCarInfo.Services.Authentication
                 string error = string.Join(", ", result.Errors.Select(e => e.Description));
                 return new Result { Succeeded = false, Error = error };
             }
-
-            return new Result { Succeeded = true };
-        }
-
-        public async Task<Result> LoginAsync(LoginModel model)
-        {
-            var user = await _userManager.FindByNameAsync(model.Username);
-
-            if (user == null)
-                return new Result { Succeeded = false, Error = "Invalid username or password." };
-
-            var result = await _signInManager.PasswordSignInAsync(
-                user, model.Password, true, lockoutOnFailure: false);
-
-            if (!result.Succeeded)
-                return new Result { Succeeded = false, Error = "Invalid username or password." };
 
             return new Result { Succeeded = true };
         }
