@@ -22,6 +22,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+// Periodically re-validates Identity cookies so the Blazor authentication state stays in sync
+builder.Services.AddScoped<IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
+    sp.GetRequiredService<IdentityRevalidatingAuthenticationStateProvider>());
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddHttpContextAccessor();
@@ -45,6 +52,16 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/logout", async (SignInManager<ApplicationUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Redirect("/");
+}).RequireAuthorization();
+
+app.MapRazorPages();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

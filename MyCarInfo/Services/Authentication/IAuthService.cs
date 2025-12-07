@@ -1,11 +1,9 @@
-﻿namespace MyCarInfo.Services.Authentication
-{
-    using System.Threading.Tasks;
-    using MyCarInfo.Models;
+﻿using MyCarInfo.Models;
 
+namespace MyCarInfo.Services.Authentication
+{
     public interface IAuthService
     {
         Task<Result> RegisterAsync(RegisterModel model);
-        Task LogoutAsync();
     }
 }

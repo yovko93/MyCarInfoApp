@@ -45,7 +45,7 @@ namespace MyCarInfo.Pages
                 return LocalRedirect("/");
             }
 
-            ErrorMessage = "Invalid login attempt.";
+            ErrorMessage = "Невалиден потребител или грешна парола!";
             return Page();
         }
     }

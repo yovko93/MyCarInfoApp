@@ -42,10 +42,5 @@ namespace MyCarInfo.Services.Authentication
 
             return new Result { Succeeded = true };
         }
-
-        public async Task LogoutAsync()
-        {
-            await _signInManager.SignOutAsync();
-        }
     }
 }
