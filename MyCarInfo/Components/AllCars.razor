@@ -2,43 +2,43 @@
 @using MyCarInfo.Data
 @inject ICarService CarService
 
-<section class="featured section" id="featured">
+<section class="gallery section" id="gallery">
     <h2 class="section__title">Всички автомобили</h2>
-    <div class="featured__container container">
+    <div class="gallery__container container">
         @if (isLoading)
         {
-            <div class="featured__loading">Зареждане на автомобилите...</div>
+            <div class="gallery__loading">Зареждане на автомобилите...</div>
         }
         else if (!string.IsNullOrEmpty(errorMessage))
         {
-            <div class="featured__error">@errorMessage</div>
+            <div class="gallery__error">@errorMessage</div>
         }
         else if (cars.Count == 0)
         {
-            <div class="featured__empty">Няма регистрирани автомобили.</div>
+            <div class="gallery__empty">Няма регистрирани автомобили.</div>
         }
         else
         {
-            <div class="featured__content grid">
+            <div class="gallery__content grid">
                 @foreach (var car in cars)
                 {
-                    <article class="featured__card">
+                    <article class="gallery__card">
                         <div class="shape shape__smaller"></div>
 
-                        <h1 class="featured__title">@car.Brand</h1>
-                        <h3 class="featured__subtitle">@car.Model</h3>
+                        <h1 class="gallery__title">@car.Brand</h1>
+                        <h3 class="gallery__subtitle">@car.Model</h3>
 
-                        <img src="@GetPrimaryImage(car)" alt="@($"{car.Brand} {car.Model}")" class="featured__img">
+                        <img src="@GetPrimaryImage(car)" alt="@($"{car.Brand} {car.Model}")" class="gallery__img">
 
-                        <div class="featured__details">
-                            <span class="featured__detail"><i class="ri-dashboard-2-line"></i> @car.Engine</span>
-                            <span class="featured__detail"><i class="ri-timer-2-line"></i> @car.HorsePower hp</span>
-                            <span class="featured__detail"><i class="ri-palette-line"></i> @car.Color</span>
-                            <span class="featured__detail"><i class="ri-hashtag"></i> @car.LicensePlate</span>
+                        <div class="gallery__details">
+                            <span class="gallery__detail"><i class="ri-dashboard-2-line"></i> @car.Engine</span>
+                            <span class="gallery__detail"><i class="ri-timer-2-line"></i> @car.HorsePower hp</span>
+                            <span class="gallery__detail"><i class="ri-palette-line"></i> @car.Color</span>
+                            <span class="gallery__detail"><i class="ri-hashtag"></i> @car.LicensePlate</span>
                         </div>
 
-                        <div class="featured__footer">
-                            <span class="featured__owner">
+                        <div class="gallery__footer">
+                            <span class="gallery__owner">
                                 <i class="ri-user-line"></i>
                                 @(car.User?.UserName ?? "Анонимен потребител")
                             </span>
@@ -73,6 +73,6 @@
 
     private static string GetPrimaryImage(Vehicle car)
     {
-        return car.Images.FirstOrDefault()?.ImagePath ?? "/img/featured1.png";
+        return car.Images.FirstOrDefault()?.ImagePath ?? "/img/gallery1.png";
     }
 }

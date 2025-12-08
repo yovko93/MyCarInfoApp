@@ -90,27 +90,27 @@ let swiperPopular = new Swiper(".popular__container", {
       },
 });
 
-/*=============== MIXITUP FILTER FEATURED ===============*/
+/*=============== MIXITUP FILTER gallery ===============*/
 
-let mixerFeatured = mixitup('.featured__content', {
+let mixergallery = mixitup('.gallery__content', {
     selectors: {
-        target: '.featured__card'
+        target: '.gallery__card'
     },
     animation: {
         duration: 300
     }
 });
 
-/* Link active color featured */
+/* Link active color gallery */
 
-const linkFeatured = document.querySelectorAll('.featured__item');
+const linkgallery = document.querySelectorAll('.gallery__item');
 
-function activeFeatured(){
-    linkFeatured.forEach(l=>l.classList.remove('active-featured'));
-    this.classList.add('active-featured');
+function activegallery(){
+    linkgallery.forEach(l=>l.classList.remove('active-gallery'));
+    this.classList.add('active-gallery');
 }
 
-linkFeatured.forEach(l=> l.addEventListener('click', activeFeatured));
+linkgallery.forEach(l=> l.addEventListener('click', activegallery));
 
 
 /*=============== SHOW SCROLL UP ===============*/
@@ -158,7 +158,7 @@ const sr = ScrollReveal({
 })
 
 
-sr.reveal(`.home__title, .popular__container, .features__img, .featured__filters`);
+sr.reveal(`.home__title, .popular__container, .features__img, .gallery__filters`);
 sr.reveal(`.home__subtitle`, {delay: 500});
 sr.reveal(`.home__elec`, {delay: 600});
 sr.reveal(`.home__img`, {delay: 800});
@@ -170,4 +170,4 @@ sr.reveal(`.about__data, .offer__img, .home__social-icon`, {origin: 'right'});
 
 sr.reveal(`.features__map, .slider__bg`, {delay:600, origin: 'bottom'});
 sr.reveal(`.features__card`, {interval: 300});
-sr.reveal(`.featured__card, .logos__content, .footer__content`, {interval: 100});
+sr.reveal(`.gallery__card, .logos__content, .footer__content`, {interval: 100});

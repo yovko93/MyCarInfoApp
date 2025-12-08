@@ -1,12 +1,11 @@
 ﻿@page "/register-car"
 
 @using System.Collections.Generic
-@using System.IO
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @inject ICarService CarService
+@inject IImageService ImageService
 @inject NavigationManager Navigation
-@inject IWebHostEnvironment Environment
 @attribute [Authorize]
 
 <PageTitle>Register Car</PageTitle>
@@ -83,6 +82,10 @@
                             @foreach (var image in carModel.ImagePaths)
                             {
                                 <div class="preview-card">
+                                    <button type="button" class="preview-card__remove" @onclick="@(() => RemoveImage(image))">
+                                        <i class="ri-close-line"></i>
+                                        Премахни
+                                    </button>
                                     <img src="@image" alt="Car image" />
                                 </div>
                             }
@@ -152,36 +155,37 @@
     {
         uploadError = null;
 
-        var uploadsRoot = Path.Combine(Environment.WebRootPath, "uploads", "cars");
-        Directory.CreateDirectory(uploadsRoot);
-
         var selectedFiles = e.GetMultipleFiles(MaxFileCount);
-        foreach (var file in selectedFiles)
+
+        var uploadResult = await ImageService.SaveImagesAsync(
+           selectedFiles,
+           "uploads/cars",
+           MaxFileSize,
+           MaxFileCount,
+           AllowedExtensions);
+
+        uploadError = uploadResult.Errors.Any()
+            ? string.Join(" ", uploadResult.Errors.Distinct())
+            : null;
+
+        foreach (var relativePath in uploadResult.SavedPaths)
         {
-            var extension = Path.GetExtension(file.Name).ToLowerInvariant();
-            if (!AllowedExtensions.Contains(extension))
-            {
-                uploadError = "Моля, качи изображение във формат JPG, PNG или WEBP.";
-                continue;
-            }
-
-            if (file.Size > MaxFileSize)
-            {
-                uploadError = "Всяка снимка трябва да бъде по-малка от 5 MB.";
-                continue;
-            }
-
-            var fileName = $"{Guid.NewGuid()}{extension}";
-            var savePath = Path.Combine(uploadsRoot, fileName);
-
-            await using var stream = File.Create(savePath);
-            await file.OpenReadStream(MaxFileSize).CopyToAsync(stream);
-
-            var relativePath = $"/uploads/cars/{fileName}";
             if (!carModel.ImagePaths.Contains(relativePath))
             {
                 carModel.ImagePaths.Add(relativePath);
             }
         }
+    }
+
+    private void RemoveImage(string imagePath)
+    {
+        if (string.IsNullOrWhiteSpace(imagePath))
+        {
+            return;
+        }
+
+        ImageService.DeleteImage(imagePath);
+
+        carModel.ImagePaths.Remove(imagePath);
     }
 }
