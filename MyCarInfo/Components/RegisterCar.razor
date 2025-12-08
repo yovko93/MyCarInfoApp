@@ -54,17 +54,17 @@
                     </div>
                     <div class="input__group">
                         <label class="input__label">Гражданска отговорност</label>
-                        <InputDate class="input__field date-input" @bind-Value="carModel.InsuranceExpiryDate" />
+                        <InputDate @attributes="datePickerAttributes" @bind-Value="carModel.InsuranceExpiryDate" />
                         <ValidationMessage For="@(() => carModel.InsuranceExpiryDate)" />
                     </div>
                     <div class="input__group">
                         <label class="input__label">Годишен технически преглед</label>
-                        <InputDate class="input__field date-input" @bind-Value="carModel.InspectionExpiryDate" />
+                        <InputDate @attributes="datePickerAttributes" @bind-Value="carModel.InspectionExpiryDate" />
                         <ValidationMessage For="@(() => carModel.InspectionExpiryDate)" />
                     </div>
                     <div class="input__group">
                         <label class="input__label">Винетка валидна до</label>
-                        <InputDate class="input__field date-input" @bind-Value="carModel.VignetteExpiryDate" />
+                        <InputDate @attributes="datePickerAttributes" @bind-Value="carModel.VignetteExpiryDate" />
                         <ValidationMessage For="@(() => carModel.VignetteExpiryDate)" />
                     </div>
                 </div>
@@ -122,6 +122,7 @@
 
     private readonly Dictionary<string, object> datePickerAttributes = new()
         {
+            ["class"] = "input__field date-input",
             ["onfocus"] = "this.showPicker()",
             ["onclick"] = "this.showPicker()"
         };
