@@ -600,73 +600,6 @@ a.nav__link.btn-link {
     background-color: var(--first-color);
 }
 
-/*=============== FEATURES ===============*/
-.features {
-    overflow: hidden;
-    position: relative;
-}
-
-.features__container {
-    padding-top: 2rem;
-    grid-template-columns: 285px;
-    justify-content: center;
-}
-
-.features__group {
-    display: grid;
-    position: relative;
-    z-index: 10;
-}
-
-.features__img {
-    width: 150px;
-    justify-self: center;
-}
-
-.features__card {
-    width: 112px;
-    background-color: hsla(0, 0%, 100%, .1);
-    backdrop-filter: blur(16px);
-    padding: .75rem 2rem;
-    border-radius: 1rem;
-    text-align: center;
-    color: var(--title-color);
-    position: absolute;
-}
-
-.features__card-1 {
-    top: 4rem;
-    left: 1.5rem;
-}
-
-.features__card-2 {
-    top: 8rem;
-    right: 1rem;
-}
-
-.features__card-3 {
-    left: 1.5rem;
-    bottom: 2rem;
-}
-
-.features__card-title {
-    font-size: var(--h3-font-size);
-    margin-bottom: 0.25rem;
-}
-
-.features__card-description {
-    font-size: var(--smaller-font-size);
-}
-
-.features__map {
-    max-width: initial;
-    width: 450px;
-    position: absolute;
-    top: 8rem;
-    left: -3rem;
-    margin: auto;
-    transform: rotate(-22deg);
-}
 
 /*=============== FEATURED ===============*/
 
@@ -1055,7 +988,7 @@ a.nav__link.btn-link {
 
 @media screen and (min-width: 767px) {
     .section {
-        padding: 7rem 0 2rem;
+        padding: 6rem 0 2rem;
     }
 
     .nav {
@@ -1224,7 +1157,7 @@ a.nav__link.btn-link {
 
     .featured__content {
         grid-template-columns: repeat(3, 248px);
-        gap: 4rem;
+        gap: 3rem;
     }
 
     .offer__container {

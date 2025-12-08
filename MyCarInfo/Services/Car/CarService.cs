@@ -7,38 +7,46 @@ namespace MyCarInfo.Services.Car
 {
     public class CarService : ICarService
     {
-        private readonly AppDbContext _context;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public CarService(
-            AppDbContext context,
-            IHttpContextAccessor httpContextAccessor,
-            UserManager<ApplicationUser> userManager)
+            IServiceScopeFactory scopeFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
+            _scopeFactory = scopeFactory;
             _httpContextAccessor = httpContextAccessor;
-            _userManager = userManager;
         }
 
         public async Task<int> GetCarsCountAsync()
         {
-            return await _context.Cars.CountAsync();
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            return await context.Cars.AsNoTracking().CountAsync();
         }
 
         public async Task<List<Vehicle>> GetAllCarsAsync()
         {
-            return await _context.Cars
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            return await context.Cars
                 .Include(c => c.Images)
                 .Include(c => c.User)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<Vehicle?> GetCarByIdAsync(int id)
         {
-            return await _context.Cars
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            return await context.Cars
                 .Include(c => c.Images)
                 .Include(c => c.User)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -47,7 +55,10 @@ namespace MyCarInfo.Services.Car
             try
             {
                 var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
-                var user = await _userManager.GetUserAsync(httpContext.User);
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = await userManager.GetUserAsync(httpContext.User);
 
                 if (user == null)
                 {
@@ -69,13 +80,12 @@ namespace MyCarInfo.Services.Car
                     {
                         ImagePath = path
                     }).ToList(),
-                    UserId = user.Id,
-                    User = user
+                    UserId = user.Id
                 };
 
                 user.Cars.Add(car);
-                await _context.Cars.AddAsync(car);
-                await _context.SaveChangesAsync();
+                await context.Cars.AddAsync(car);
+                await context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -86,22 +96,28 @@ namespace MyCarInfo.Services.Car
 
         public async Task UpdateCarAsync(CarModel carModel)
         {
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
             var car = new Vehicle
             {
 
             };
 
-            _context.Cars.Update(car);
-            await _context.SaveChangesAsync();
+            context.Cars.Update(car);
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteCarAsync(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var car = await context.Cars.FindAsync(id);
             if (car != null)
             {
-                _context.Cars.Remove(car);
-                await _context.SaveChangesAsync();
+                context.Cars.Remove(car);
+                await context.SaveChangesAsync();
             }
         }
     }

@@ -1,99 +1,78 @@
-﻿<!--==================== FEATURED ====================-->
+﻿<!--==================== ALL CARS ====================-->
+@using MyCarInfo.Data
+@inject ICarService CarService
+
 <section class="featured section" id="featured">
-    <h2 class="section__title">Featured Cars</h2>
+    <h2 class="section__title">Всички автомобили</h2>
     <div class="featured__container container">
-        <ul class="featured__filters">
-            <li>
-                <button class="featured__item active-featured" data-filter="all">
-                    <span>All</span>
-                </button>
-            </li>
-            <li>
-                <button class="featured__item" data-filter=".tesla">
-                    <img src="./img/logo3.png" alt="">
+        @if (isLoading)
+        {
+            <div class="featured__loading">Зареждане на автомобилите...</div>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="featured__error">@errorMessage</div>
+        }
+        else if (cars.Count == 0)
+        {
+            <div class="featured__empty">Няма регистрирани автомобили.</div>
+        }
+        else
+        {
+            <div class="featured__content grid">
+                @foreach (var car in cars)
+                {
+                    <article class="featured__card">
+                        <div class="shape shape__smaller"></div>
 
-                </button>
-            </li>
-            <li>
-                <button class="featured__item" data-filter=".audi">
-                    <img src="./img/logo2.png" alt="">
-                </button>
-            </li>
-            <li>
-                <button class="featured__item" data-filter=".porsche">
-                    <img src="./img/logo1.png" alt="">
-                </button>
-            </li>
-        </ul>
+                        <h1 class="featured__title">@car.Brand</h1>
+                        <h3 class="featured__subtitle">@car.Model</h3>
 
-        <div class="featured__content grid">
+                        <img src="@GetPrimaryImage(car)" alt="@($"{car.Brand} {car.Model}")" class="featured__img">
 
-            <article class="featured__card mix tesla">
-                <div class="shape shape__smaller"></div>
+                        <div class="featured__details">
+                            <span class="featured__detail"><i class="ri-dashboard-2-line"></i> @car.Engine</span>
+                            <span class="featured__detail"><i class="ri-timer-2-line"></i> @car.HorsePower hp</span>
+                            <span class="featured__detail"><i class="ri-palette-line"></i> @car.Color</span>
+                            <span class="featured__detail"><i class="ri-hashtag"></i> @car.LicensePlate</span>
+                        </div>
 
-                <h1 class="featured__title">Tesla</h1>
-                <h3 class="featured__subtitle">Model X</h3>
-                <img src="./img/featured1.png" alt="" class="featured__img">
-                <h3 class="featured__price">$98,900</h3>
-                <button class="button featured__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-            <article class="featured__card mix tesla">
-                <div class="shape shape__smaller"></div>
-
-                <h1 class="featured__title">Tesla</h1>
-                <h3 class="featured__subtitle">Model 3</h3>
-                <img src="./img/featured2.png" alt="" class="featured__img">
-                <h3 class="featured__price">$45,900</h3>
-                <button class="button featured__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-            <article class="featured__card mix audi">
-                <div class="shape shape__smaller"></div>
-
-                <h1 class="featured__title">Audi</h1>
-                <h3 class="featured__subtitle">E-tron</h3>
-                <img src="./img/featured3.png" alt="" class="featured__img">
-                <h3 class="featured__price">$175,900</h3>
-                <button class="button featured__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-            <article class="featured__card mix porsche">
-                <div class="shape shape__smaller"></div>
-
-                <h1 class="featured__title">Porsche</h1>
-                <h3 class="featured__subtitle">Boxster 987</h3>
-                <img src="./img/featured4.png" alt="" class="featured__img">
-                <h3 class="featured__price">$126,900</h3>
-                <button class="button featured__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-            <article class="featured__card mix porsche">
-                <div class="shape shape__smaller"></div>
-
-                <h1 class="featured__title">Porsche</h1>
-                <h3 class="featured__subtitle">Panamera</h3>
-                <img src="./img/featured5.png" alt="" class="featured__img">
-                <h3 class="featured__price">$175,900</h3>
-                <button class="button featured__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-
-        </div>
+                        <div class="featured__footer">
+                            <span class="featured__owner">
+                                <i class="ri-user-line"></i>
+                                @(car.User?.UserName ?? "Анонимен потребител")
+                            </span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
     </div>
-
 </section>
 
 @code {
+    private List<Vehicle> cars = new();
+    private bool isLoading = true;
+    private string? errorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            cars = await CarService.GetAllCarsAsync();
+        }
+        catch (Exception)
+        {
+            errorMessage = "Възникна грешка при зареждане на автомобилите.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string GetPrimaryImage(Vehicle car)
+    {
+        return car.Images.FirstOrDefault()?.ImagePath ?? "/img/featured1.png";
+    }
 }
