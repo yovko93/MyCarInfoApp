@@ -26,5 +26,6 @@ namespace MyCarInfo.Models
         public DateTime InspectionExpiryDate { get; set; }
 
         public DateTime VignetteExpiryDate { get; set; }
+        public List<string> ImagePaths { get; set; } = new();
     }
 }

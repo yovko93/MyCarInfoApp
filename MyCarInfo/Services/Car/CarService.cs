@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyCarInfo.Data;
 using MyCarInfo.Models;
-using System.Security.Claims;
 
 namespace MyCarInfo.Services.Car
 {
@@ -12,9 +11,14 @@ namespace MyCarInfo.Services.Car
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CarService(AppDbContext context)
+        public CarService(
+            AppDbContext context,
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         public async Task<int> GetCarsCountAsync()
@@ -24,20 +28,31 @@ namespace MyCarInfo.Services.Car
 
         public async Task<List<Vehicle>> GetAllCarsAsync()
         {
-            return await _context.Cars.ToListAsync();
+            return await _context.Cars
+                .Include(c => c.Images)
+                .Include(c => c.User)
+                .ToListAsync();
         }
 
         public async Task<Vehicle?> GetCarByIdAsync(int id)
         {
-            return await _context.Cars.FindAsync(id);
+            return await _context.Cars
+                .Include(c => c.Images)
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task AddCarAsync(CarModel carModel)
         {
             try
             {
-                //var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+                var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
+                var user = await _userManager.GetUserAsync(httpContext.User);
+
+                if (user == null)
+                {
+                    throw new InvalidOperationException("User must be logged in to add a car.");
+                }
 
                 var car = new Vehicle
                 {
@@ -46,12 +61,19 @@ namespace MyCarInfo.Services.Car
                     LicensePlate = carModel.LicensePlate,
                     Engine = carModel.Engine,
                     HorsePower = carModel.HorsePower,
+                    Color = carModel.Color,
                     InspectionExpiryDate = carModel.InspectionExpiryDate,
                     InsuranceExpiryDate = carModel.InsuranceExpiryDate,
                     VignetteExpiryDate = carModel.VignetteExpiryDate,
-                    //UserId = userId,
+                    Images = carModel.ImagePaths.Select(path => new CarImage
+                    {
+                        ImagePath = path
+                    }).ToList(),
+                    UserId = user.Id,
+                    User = user
                 };
 
+                user.Cars.Add(car);
                 await _context.Cars.AddAsync(car);
                 await _context.SaveChangesAsync();
             }

@@ -1,90 +1,134 @@
 ﻿@page "/register-car"
 
-@using MyCarInfo.Models
+@using System.Collections.Generic
+@using System.IO
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
 @inject ICarService CarService
 @inject NavigationManager Navigation
+@inject IWebHostEnvironment Environment
+@attribute [Authorize]
 
 <PageTitle>Register Car</PageTitle>
 
-<section class="about section">
+<section class="section register-section">
     <div class="container">
-        <h2 class="section__title">Регистрирай своя автомобил</h2>
-
-        <EditForm Model="@carModel" OnValidSubmit="HandleValidSubmit">
-            <DataAnnotationsValidator />
-
-            <div class="grid two-columns">
-
-                <div class="input__group">
-                    <label class="input__label">Марка</label>
-                    <InputText class="input__field" @bind-Value="carModel.Brand" />
-                    <ValidationMessage For="@(() => carModel.Brand)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Модел</label>
-                    <InputText class="input__field" @bind-Value="carModel.Model" />
-                    <ValidationMessage For="@(() => carModel.Model)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Регистрационен номер</label>
-                    <InputText class="input__field" @bind-Value="carModel.LicensePlate" />
-                    <ValidationMessage For="@(() => carModel.LicensePlate)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Двигател</label>
-                    <InputText class="input__field" @bind-Value="carModel.Engine" />
-                    <ValidationMessage For="@(() => carModel.Engine)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Конски сили</label>
-                    <InputNumber class="input__field" @bind-Value="carModel.HorsePower" />
-                    <ValidationMessage For="@(() => carModel.HorsePower)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Гражданска отговорност</label>
-                    <InputDate class="input__field date-input" @bind-Value="carModel.InsuranceExpiryDate" />
-                    @* <i class="ri-calendar-line calendar-icon"></i> *@
-                    <ValidationMessage For="@(() => carModel.InsuranceExpiryDate)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Годишен технически преглед</label>
-                    <InputDate class="input__field date-input" @bind-Value="carModel.InspectionExpiryDate" />
-                    <ValidationMessage For="@(() => carModel.InspectionExpiryDate)" />
-                </div>
-                <div class="input__group">
-                    <label class="input__label">Винетка валидна до</label>
-                    <InputDate class="input__field date-input" @bind-Value="carModel.VignetteExpiryDate" />
-                    <ValidationMessage For="@(() => carModel.VignetteExpiryDate)" />
-                </div>
-            </div>
-            <div class="mt-3">
-                <button type="submit" class="button" disabled="@isLoading">
-                    @(isLoading ? "Запазване..." : "Запази")
-                </button>
+        <div class="form-card">
+            <div class="section__header">
+                <h2 class="section__title">Регистрирай своя автомобил</h2>
+                <p class="section__description">Попълни детайлите, добави снимки и запази автомобила си в гаража на приложението.</p>
             </div>
 
-        </EditForm>
+            <EditForm Model="@carModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="grid two-columns">
+                    <div class="input__group">
+                        <label class="input__label">Марка</label>
+                        <InputText class="input__field" @bind-Value="carModel.Brand" />
+                        <ValidationMessage For="@(() => carModel.Brand)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Модел</label>
+                        <InputText class="input__field" @bind-Value="carModel.Model" />
+                        <ValidationMessage For="@(() => carModel.Model)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Регистрационен номер</label>
+                        <InputText class="input__field" @bind-Value="carModel.LicensePlate" />
+                        <ValidationMessage For="@(() => carModel.LicensePlate)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Двигател</label>
+                        <InputText class="input__field" @bind-Value="carModel.Engine" />
+                        <ValidationMessage For="@(() => carModel.Engine)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Конски сили</label>
+                        <InputNumber class="input__field" @bind-Value="carModel.HorsePower" />
+                        <ValidationMessage For="@(() => carModel.HorsePower)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Цвят</label>
+                        <InputText class="input__field" @bind-Value="carModel.Color" />
+                        <ValidationMessage For="@(() => carModel.Color)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Гражданска отговорност</label>
+                        <InputDate class="input__field date-input" @bind-Value="carModel.InsuranceExpiryDate" />
+                        <ValidationMessage For="@(() => carModel.InsuranceExpiryDate)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Годишен технически преглед</label>
+                        <InputDate class="input__field date-input" @bind-Value="carModel.InspectionExpiryDate" />
+                        <ValidationMessage For="@(() => carModel.InspectionExpiryDate)" />
+                    </div>
+                    <div class="input__group">
+                        <label class="input__label">Винетка валидна до</label>
+                        <InputDate class="input__field date-input" @bind-Value="carModel.VignetteExpiryDate" />
+                        <ValidationMessage For="@(() => carModel.VignetteExpiryDate)" />
+                    </div>
+                </div>
 
-        @if (successMessage != null)
-        {
-            <div class="alert alert-success mt-3">
-                @successMessage
-            </div>
-        }
+                <div class="input__group file-upload">
+                    <label class="input__label">Снимки на автомобила</label>
+                    <InputFile OnChange="HandleFileSelected" multiple accept="image/*" />
+                    <p class="input__hint">Позволени са до 5 изображения (.jpg, .jpeg, .png, .webp) с размер до 5 MB всяко.</p>
+                    @if (!string.IsNullOrWhiteSpace(uploadError))
+                    {
+                        <div class="alert alert-warning">@uploadError</div>
+                    }
+                    @if (carModel.ImagePaths.Any())
+                    {
+                        <div class="preview-grid">
+                            @foreach (var image in carModel.ImagePaths)
+                            {
+                                <div class="preview-card">
+                                    <img src="@image" alt="Car image" />
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
 
+                <div class="register-car__actions">
+                    <button type="submit" class="button" disabled="@isLoading">
+                        @(isLoading ? "Запазване..." : "Запази")
+                    </button>
+                </div>
+
+                <div class="register-car__actions">
+                    <NavLink href="/" class="button auth__home">
+                        <i class="ri-home-5-line"></i>
+                        Към началната страница
+                    </NavLink>
+                </div>
+            </EditForm>
+
+            @if (successMessage != null)
+            {
+                <div class="alert alert-success mt-3">
+                    @successMessage
+                </div>
+            }
+        </div>
     </div>
 </section>
 
-@if (successMessage != null)
-{
-    <div class="alert alert-success mt-3">
-        @successMessage
-    </div>
-}
 
 @code {
+    private const long MaxFileSize = 5 * 1024 * 1024;
+    private const int MaxFileCount = 5;
+    private static readonly string[] AllowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+    private readonly Dictionary<string, object> datePickerAttributes = new()
+        {
+            ["onfocus"] = "this.showPicker()",
+            ["onclick"] = "this.showPicker()"
+        };
+
     private bool isLoading = false;
     private string? successMessage;
+    private string? uploadError;
 
     private CarModel carModel = new()
         {
@@ -96,45 +140,47 @@
     private async Task HandleValidSubmit()
     {
         isLoading = true;
+        uploadError = null;
         await CarService.AddCarAsync(carModel);
         successMessage = "Автомобилът е регистриран успешно!";
-
-        // Redirect after 1.5 seconds
         await Task.Delay(1500);
         Navigation.NavigateTo("/");
     }
-}
 
-<style>
-    .input__group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 1rem;
-    }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        uploadError = null;
 
-    .input__label {
-        font-size: 14px;
-        margin-bottom: .25rem;
-        font-weight: 500;
-    }
+        var uploadsRoot = Path.Combine(Environment.WebRootPath, "uploads", "cars");
+        Directory.CreateDirectory(uploadsRoot);
 
-    .input__field {
-        padding: 12px 15px;
-        border: 1px solid var(--text-color-light);
-        border-radius: 10px;
-        background-color: var(--container-color);
-        color: var(--text-color);
-    }
+        var selectedFiles = e.GetMultipleFiles(MaxFileCount);
+        foreach (var file in selectedFiles)
+        {
+            var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+            if (!AllowedExtensions.Contains(extension))
+            {
+                uploadError = "Моля, качи изображение във формат JPG, PNG или WEBP.";
+                continue;
+            }
 
-        .input__field:focus {
-            outline: none;
-            border-color: var(--first-color);
+            if (file.Size > MaxFileSize)
+            {
+                uploadError = "Всяка снимка трябва да бъде по-малка от 5 MB.";
+                continue;
+            }
+
+            var fileName = $"{Guid.NewGuid()}{extension}";
+            var savePath = Path.Combine(uploadsRoot, fileName);
+
+            await using var stream = File.Create(savePath);
+            await file.OpenReadStream(MaxFileSize).CopyToAsync(stream);
+
+            var relativePath = $"/uploads/cars/{fileName}";
+            if (!carModel.ImagePaths.Contains(relativePath))
+            {
+                carModel.ImagePaths.Add(relativePath);
+            }
         }
-
-    .grid.two-columns {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
     }
-
-</style>
+}

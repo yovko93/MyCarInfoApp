@@ -12,5 +12,6 @@ namespace MyCarInfo.Data
         }
 
         public DbSet<Vehicle> Cars { get; set; }
+        public DbSet<CarImage> CarImages { get; set; }
     }
 }

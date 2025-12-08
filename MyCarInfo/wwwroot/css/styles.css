@@ -1443,3 +1443,95 @@ a.nav__link.btn-link {
         font-size: var(--h2-font-size);
     }
 }
+
+/*=============== REGISTER-CAR PAGE ===============*/
+.register-section {
+    padding-top: 1rem;
+}
+
+.form-card {
+    background-color: var(--container-color);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+.section__header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section__description {
+    color: var(--text-color);
+    margin-top: .5rem;
+}
+
+.input__group {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+
+.input__label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.input__field {
+    padding: 12px 15px;
+    border: 1px solid var(--text-color-light);
+    border-radius: 10px;
+    background-color: var(--body-color);
+    color: var(--text-color);
+}
+
+    .input__field:focus {
+        outline: none;
+        border-color: var(--first-color);
+    }
+
+.grid.two-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem 1.5rem;
+}
+
+.file-upload {
+    margin-top: 1.5rem;
+}
+
+.input__hint {
+    color: var(--text-color-light);
+    font-size: var(--small-font-size);
+}
+
+.preview-grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.preview-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .preview-card img {
+        border-radius: 8px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+.register-car__actions {
+    padding-top: 1rem;
+    margin: 0rem 0 0;
+    display: flex;
+    justify-content: center;
+}
