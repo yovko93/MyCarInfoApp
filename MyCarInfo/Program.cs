@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MyCarInfo.Data;
 using MyCarInfo.Services.Authentication;
 using MyCarInfo.Services.Car;
+using MyCarInfo.Services.Image;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
