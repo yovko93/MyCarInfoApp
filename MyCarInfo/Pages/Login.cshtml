@@ -22,7 +22,15 @@
             <form method="post" class="auth__form">
                 @Html.AntiForgeryToken()
 
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                <input type="hidden" name="message" value="@Model.InfoMessage" />
+
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @if (Model.InfoMessage != null)
+                {
+                    <div class="alert alert-info auth__alert">@Model.InfoMessage</div>
+                }
 
                 @if (Model.ErrorMessage != null)
                 {

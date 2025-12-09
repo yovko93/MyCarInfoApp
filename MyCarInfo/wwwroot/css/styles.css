@@ -1294,6 +1294,10 @@ gallery__details{
 }
 
 .auth__alert {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red text */
+    border-color: #f5c6cb; /* Red border */
+    padding: 0.5rem;
     margin: 0;
 }
 

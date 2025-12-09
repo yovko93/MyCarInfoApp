@@ -18,21 +18,39 @@ namespace MyCarInfo.Pages
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public string? ReturnUrl { get; set; }
+
+        public string? InfoMessage { get; set; }
+
         public string? ErrorMessage { get; set; }
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Username is required")]
+            [Required(ErrorMessage = "Въведете потребител!")]
             public string Username { get; set; }
 
-            [Required(ErrorMessage = "Password is required")]
+            [Required(ErrorMessage = "Въведете парола!")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
         }
 
-        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
+        public void OnGet(string? message = null, string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
+               ? Url.Content("~/")
+               : returnUrl;
+
+            InfoMessage = string.IsNullOrWhiteSpace(message) ? null : message;
+        }
+
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null, string? message = null)
+        {
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
+                ? Url.Content("~/")
+                : returnUrl;
+
+            InfoMessage = string.IsNullOrWhiteSpace(message) ? null : message;
 
             if (!ModelState.IsValid)
                 return Page();
@@ -42,7 +60,7 @@ namespace MyCarInfo.Pages
 
             if (result.Succeeded)
             {
-                return LocalRedirect("/");
+                return LocalRedirect(ReturnUrl);
             }
 
             ErrorMessage = "Невалиден потребител или грешна парола!";

@@ -1,0 +1,31 @@
+﻿@using System
+@using System.Collections.Generic
+
+@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        var queryParameters = new List<string>
+        {
+            $"message={Uri.EscapeDataString("Ако искате да добавите вашия автомобил трябва да имате регистрация!")}"
+        };
+
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            if (!returnUrl.StartsWith("/"))
+            {
+                returnUrl = $"/{returnUrl}";
+            }
+
+            queryParameters.Add($"returnUrl={Uri.EscapeDataString(returnUrl)}");
+        }
+
+        var queryString = string.Join("&", queryParameters);
+        var targetUrl = string.IsNullOrWhiteSpace(queryString) ? "/login" : $"/login?{queryString}";
+
+        Navigation.NavigateTo(targetUrl, true);
+    }
+}

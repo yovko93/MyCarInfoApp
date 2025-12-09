@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using MyCarInfo.Models;
-using System.Linq;
 
 namespace MyCarInfo.Services.Image
 {
