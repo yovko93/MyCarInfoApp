@@ -1,0 +1,345 @@
+﻿<!--=================== CAR DETAILS ======================-->
+
+@page "/my-car/{id:int}"
+@using System.Security.Claims
+@using MyCarInfo.Data
+@attribute [Authorize]
+@inject ICarService CarService
+@inject NavigationManager Navigation
+
+<PageTitle>Car Details</PageTitle>
+
+<section class="section car-details">
+    <div class="container">
+        <div class="section__header">
+            <h2 class="section__title">Детайли за автомобила</h2>
+            <p class="section__description">Виж цялата налична информация за автомобила и редактирай данните при нужда.</p>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="car-details__status">Зареждане на информацията...</div>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="car-details__status car-details__status--error">@errorMessage</div>
+        }
+        else if (car is null)
+        {
+            <div class="car-details__status car-details__status--error">Автомобилът не беше намерен.</div>
+        }
+        else
+        {
+            <div class="car-details__layout">
+                <article class="car-details__card">
+                    <div class="car-details__header">
+                        <div>
+                            <p class="car-details__label">Марка и модел</p>
+                            <h3 class="car-details__title">@($"{car.Brand} {car.Model}")</h3>
+                            <p class="car-details__owner">
+                                <i class="ri-user-line"></i>
+                                @(car.User?.UserName ?? "Анонимен потребител")
+                            </p>
+                        </div>
+                        <span class="car-details__plate">
+                            <i class="ri-roadster-line"></i>
+                            @car.LicensePlate
+                        </span>
+                    </div>
+
+                    <div class="car-details__image">
+                        <img src="@GetPrimaryImage(car)" alt="@GetCarAlt(car)" />
+                    </div>
+
+                    <div class="car-details__stats grid">
+                        <div class="car-details__stat">
+                            <p class="car-details__label">Двигател</p>
+                            <strong>@car.Engine</strong>
+                        </div>
+                        <div class="car-details__stat">
+                            <p class="car-details__label">Мощност</p>
+                            <strong>@car.HorsePower hp</strong>
+                        </div>
+                        <div class="car-details__stat">
+                            <p class="car-details__label">Цвят</p>
+                            <strong>@car.Color</strong>
+                        </div>
+                    </div>
+
+                    <div class="car-details__dates">
+                        <div class="car-details__date">
+                            <i class="ri-shield-check-line"></i>
+                            <div>
+                                <p class="car-details__label">Гражданска отговорност</p>
+                                <strong>@FormatDate(car.InsuranceExpiryDate)</strong>
+                            </div>
+                        </div>
+                        <div class="car-details__date">
+                            <i class="ri-tools-line"></i>
+                            <div>
+                                <p class="car-details__label">Годишен технически преглед</p>
+                                <strong>@FormatDate(car.InspectionExpiryDate)</strong>
+                            </div>
+                        </div>
+                        <div class="car-details__date">
+                            <i class="ri-roadster-line"></i>
+                            <div>
+                                <p class="car-details__label">Винетка</p>
+                                <strong>@FormatDate(car.VignetteExpiryDate)</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (car.Images.Any())
+                    {
+                        <div class="car-details__gallery">
+                            <p class="car-details__label">Снимки</p>
+                            <div class="car-details__thumbnails">
+                                @foreach (var image in car.Images)
+                                {
+                                    <img src="@image.ImagePath" alt="@GetCarAlt(car)" class="car-details__thumbnail" />
+                                }
+                            </div>
+                        </div>
+                    }
+                </article>
+
+                <div class="car-details__form">
+                    <div class="car-details__form-header">
+                        <h3>Актуализирай информацията</h3>
+                        <p>Редактирай данните на автомобила. Промените се виждат веднага след запазване.</p>
+                    </div>
+
+                    @if (!isOwner)
+                    {
+                        <div class="alert alert-warning">
+                            Само собственикът може да актуализира информацията за този автомобил.
+                        </div>
+                    }
+
+                    <EditForm Model="@editModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="grid two-columns">
+                            <div class="input__group">
+                                <label class="input__label">Марка</label>
+                                <InputText class="input__field" @bind-Value="editModel.Brand" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.Brand)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Модел</label>
+                                <InputText class="input__field" @bind-Value="editModel.Model" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.Model)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Регистрационен номер</label>
+                                <InputText class="input__field" @bind-Value="editModel.LicensePlate" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.LicensePlate)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Двигател</label>
+                                <InputText class="input__field" @bind-Value="editModel.Engine" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.Engine)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Конски сили</label>
+                                <InputNumber class="input__field" @bind-Value="editModel.HorsePower" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.HorsePower)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Цвят</label>
+                                <InputText class="input__field" @bind-Value="editModel.Color" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.Color)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Гражданска отговорност</label>
+                                <InputDate @attributes="datePickerAttributes" @bind-Value="editModel.InsuranceExpiryDate" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.InsuranceExpiryDate)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Годишен технически преглед</label>
+                                <InputDate @attributes="datePickerAttributes" @bind-Value="editModel.InspectionExpiryDate" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.InspectionExpiryDate)" />
+                            </div>
+                            <div class="input__group">
+                                <label class="input__label">Винетка валидна до</label>
+                                <InputDate @attributes="datePickerAttributes" @bind-Value="editModel.VignetteExpiryDate" disabled="@(!isOwner)" />
+                                <ValidationMessage For="@(() => editModel.VignetteExpiryDate)" />
+                            </div>
+                        </div>
+
+                        <div class="car-details__actions">
+                            <button type="submit" class="button" disabled="@(!isOwner || isSaving)">
+                                @(isSaving ? "Запазване..." : "Запази промените")
+                            </button>
+                            <button type="button" class="button button--ghost" @onclick="GoBack">
+                                <i class="ri-arrow-go-back-line"></i>
+                                Назад
+                            </button>
+                        </div>
+
+                        @if (statusMessage is not null)
+                        {
+                            <div class="alert @(isSuccessMessage ? "alert-success" : "alert-warning")">
+                                @statusMessage
+                            </div>
+                        }
+                    </EditForm>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
+    private readonly Dictionary<string, object> datePickerAttributes = new()
+    {
+        ["class"] = "input__field date-input",
+        ["onfocus"] = "this.showPicker()",
+        ["onclick"] = "this.showPicker()"
+    };
+
+    private Vehicle? car;
+    private CarModel editModel = new();
+    private bool isOwner;
+    private bool isLoading = true;
+    private bool isSaving;
+    private bool isSuccessMessage;
+    private string? statusMessage;
+    private string? errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        statusMessage = null;
+        errorMessage = null;
+        car = null;
+        isOwner = false;
+
+        try
+        {
+            car = await CarService.GetCarByIdAsync(Id);
+
+            if (car is null)
+            {
+                return;
+            }
+
+            var authenticationState = await AuthenticationStateTask;
+            var userId = authenticationState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            isOwner = userId != null && int.TryParse(userId, out var currentUserId) && currentUserId == car.UserId;
+
+            editModel = new CarModel
+            {
+                Id = car.Id,
+                Brand = car.Brand,
+                Model = car.Model,
+                LicensePlate = car.LicensePlate,
+                Engine = car.Engine,
+                HorsePower = car.HorsePower,
+                Color = car.Color,
+                InsuranceExpiryDate = car.InsuranceExpiryDate,
+                InspectionExpiryDate = car.InspectionExpiryDate,
+                VignetteExpiryDate = car.VignetteExpiryDate,
+                ImagePaths = car.Images.Select(i => i.ImagePath).ToList()
+            };
+        }
+        catch (Exception)
+        {
+            errorMessage = "Възникна грешка при зареждане на данните за автомобила.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (!isOwner)
+        {
+            statusMessage = "Само собственикът може да актуализира този автомобил.";
+            isSuccessMessage = false;
+            return;
+        }
+
+        isSaving = true;
+        statusMessage = null;
+
+        try
+        {
+            await CarService.UpdateCarAsync(editModel);
+            statusMessage = "Данните бяха обновени успешно.";
+            isSuccessMessage = true;
+            ApplyChangesToCar();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            statusMessage = "Нямате права да редактирате този автомобил.";
+            isSuccessMessage = false;
+        }
+        catch (Exception)
+        {
+            statusMessage = "Възникна грешка при запазване на промените.";
+            isSuccessMessage = false;
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ApplyChangesToCar()
+    {
+        if (car is null)
+        {
+            return;
+        }
+
+        car.Brand = editModel.Brand;
+        car.Model = editModel.Model;
+        car.LicensePlate = editModel.LicensePlate;
+        car.Engine = editModel.Engine;
+        car.HorsePower = editModel.HorsePower;
+        car.Color = editModel.Color;
+        car.InsuranceExpiryDate = editModel.InsuranceExpiryDate;
+        car.InspectionExpiryDate = editModel.InspectionExpiryDate;
+        car.VignetteExpiryDate = editModel.VignetteExpiryDate;
+
+        var imagesToKeep = car.Images.Where(i => editModel.ImagePaths.Contains(i.ImagePath)).ToList();
+        car.Images.Clear();
+        foreach (var imagePath in editModel.ImagePaths)
+        {
+            var existingImage = imagesToKeep.FirstOrDefault(i => i.ImagePath == imagePath);
+            car.Images.Add(existingImage ?? new CarImage { ImagePath = imagePath });
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private static string GetPrimaryImage(Vehicle vehicle)
+    {
+        return vehicle.Images.FirstOrDefault()?.ImagePath ?? "/img/gallery1.png";
+    }
+
+    private static string GetCarAlt(Vehicle vehicle)
+    {
+        return $"{vehicle.Brand} {vehicle.Model}";
+    }
+
+    private static string FormatDate(DateTime date)
+    {
+        return date.ToString("dd.MM.yyyy");
+    }
+}

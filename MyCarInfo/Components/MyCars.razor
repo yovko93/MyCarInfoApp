@@ -13,25 +13,25 @@
 
             @if (isLoading)
             {
-                <div class="popular__container container">
+                <div class="my-cars__container container">
                     <div class="popular__loading">Зареждаме информация за автомобилите ви...</div>
                 </div>
             }
             else if (!string.IsNullOrEmpty(errorMessage))
             {
-                <div class="popular__container container">
+                <div class="my-cars__container container">
                     <div class="popular__error">@errorMessage</div>
                 </div>
             }
             else if (cars.Count == 0)
             {
-                <div class="popular__container container">
+                <div class="my-cars__container container">
                     <div class="popular__empty">Все още нямате добавени автомобили.</div>
                 </div>
             }
             else
             {
-                <div class="popular__container container swiper">
+                <div class="my-cars__container container swiper">
                     <div class="swiper-wrapper">
                         @foreach (var car in CurrentPageCars)
                         {
@@ -60,6 +60,10 @@
                                     <span><i class="ri-tools-line"></i> ГТП: @car.InspectionExpiryDate.ToString("dd.MM.yyyy")</span>
                                     <span><i class="ri-roadster-line"></i> Винетка: @car.VignetteExpiryDate.ToString("dd.MM.yyyy")</span>
                                 </div>
+                                <NavLink class="gallery__details-link" href="@($"/my-car/{car.Id}")">
+                                    Детайли
+                                    <i class="ri-arrow-right-line"></i>
+                                </NavLink>
                             </article>
                         }
                     </div>

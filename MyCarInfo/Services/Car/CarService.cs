@@ -126,12 +126,47 @@ namespace MyCarInfo.Services.Car
             await using var scope = _scopeFactory.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            var car = new Vehicle
+            var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to update a car.");
+
+            var car = await context.Cars
+                .Include(c => c.Images)
+                .FirstOrDefaultAsync(c => c.Id == carModel.Id);
+
+            if (car is null)
             {
+                throw new InvalidOperationException($"Car with id {carModel.Id} was not found.");
+            }
 
-            };
+            if (car.UserId != user.Id)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to update this car.");
+            }
 
-            context.Cars.Update(car);
+            car.Brand = carModel.Brand;
+            car.Model = carModel.Model;
+            car.LicensePlate = carModel.LicensePlate;
+            car.Engine = carModel.Engine;
+            car.HorsePower = carModel.HorsePower;
+            car.Color = carModel.Color;
+            car.InsuranceExpiryDate = carModel.InsuranceExpiryDate;
+            car.InspectionExpiryDate = carModel.InspectionExpiryDate;
+            car.VignetteExpiryDate = carModel.VignetteExpiryDate;
+
+            carModel.ImagePaths ??= new List<string>();
+
+            var existingImagePaths = car.Images.Select(i => i.ImagePath).ToList();
+
+            var imagesToRemove = car.Images.Where(img => !carModel.ImagePaths.Contains(img.ImagePath)).ToList();
+            context.CarImages.RemoveRange(imagesToRemove);
+
+            var imagesToAdd = carModel.ImagePaths.Except(existingImagePaths);
+            foreach (var imagePath in imagesToAdd)
+            {
+                car.Images.Add(new CarImage { ImagePath = imagePath });
+            }
+
             await context.SaveChangesAsync();
         }
 
