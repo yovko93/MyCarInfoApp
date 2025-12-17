@@ -1,151 +1,189 @@
-﻿<!--==================== POPULAR ====================-->
-<section class="popular section" id="my-cars">
-    <h2 class="section__title">
-        Отвори детайли <br> за твоята кола
-    </h2>
-    <div class="popular__container container swiper">
-        <div class="swiper-wrapper">
-            <article class="popular__card swiper-slide">
-                <div class="shapeX shape__smaller"></div>
+﻿<!--==================== MY CARS ====================-->
+﻿@using MyCarInfo.Data
+@inject ICarService CarService
+@implements IDisposable
+@using System.Threading
 
-                <h1 class="popular__title">Porsche</h1>
-                <h3 class="popular__subtitle">Turbo S</h3>
+<AuthorizeView>
+    <Authorized>
+        <section class="popular section" id="my-cars">
+            <h2 class="section__title">
+                Моите автомобили
+            </h2>
 
-                <img src="./img/popular1.png" alt="" class="popular__img">
-
-                <div class="popular__data">
-                    <div class="popular__data-group">
-                        <i class="ri-dashboard-2-line"></i> 3.7 sec
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-exchange-funds-line"></i> 356 Km/h
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-charging-pile-2-line"></i> Electric
-                    </div>
+            @if (isLoading)
+            {
+                <div class="popular__container container">
+                    <div class="popular__loading">Зареждаме информация за автомобилите ви...</div>
                 </div>
-
-                <h3 class="popular__price">$175,900</h3>
-                <button class="button popular__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-
-            <article class="popular__card swiper-slide">
-                <div class="shapeX shape__smaller"></div>
-
-                <h1 class="popular__title">Porsche</h1>
-                <h3 class="popular__subtitle">Taycan</h3>
-
-                <img src="./img/popular2.png" alt="" class="popular__img">
-
-                <div class="popular__data">
-                    <div class="popular__data-group">
-                        <i class="ri-dashboard-2-line"></i> 3.7 sec
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-exchange-funds-line"></i> 356 Km/h
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-charging-pile-2-line"></i> Electric
-                    </div>
+            }
+            else if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="popular__container container">
+                    <div class="popular__error">@errorMessage</div>
                 </div>
-
-                <h3 class="popular__price">$114,900</h3>
-                <button class="button popular__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-
-            <article class="popular__card swiper-slide">
-                <div class="shapeX shape__smaller"></div>
-
-                <h1 class="popular__title">Porsche</h1>
-                <h3 class="popular__subtitle">Turbo S Cross</h3>
-
-                <img src="./img/popular3.png" alt="" class="popular__img">
-
-                <div class="popular__data">
-                    <div class="popular__data-group">
-                        <i class="ri-dashboard-2-line"></i> 3.7 sec
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-exchange-funds-line"></i> 356 Km/h
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-charging-pile-2-line"></i> Electric
-                    </div>
+            }
+            else if (cars.Count == 0)
+            {
+                <div class="popular__container container">
+                    <div class="popular__empty">Все още нямате добавени автомобили.</div>
                 </div>
+            }
+            else
+            {
+                <div class="popular__container container swiper">
+                    <div class="swiper-wrapper">
+                        @foreach (var car in CurrentPageCars)
+                        {
+                            <article class="popular__card swiper-slide">
+                                <div class="shapeX shape__smaller"></div>
 
-                <h3 class="popular__price">$150,900</h3>
-                <button class="button popular__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
+                                <h1 class="popular__title">@car.Brand</h1>
+                                <h3 class="popular__subtitle">@car.Model</h3>
 
-            </article>
+                                <img src="@GetPrimaryImage(car)" alt="@GetCarAlt(car)" class="popular__img">
 
-            <article class="popular__card swiper-slide">
-                <div class="shapeX shape__smaller"></div>
+                                <div class="popular__data">
+                                    <div class="popular__data-group">
+                                        <i class="ri-dashboard-2-line"></i> @car.Engine
+                                    </div>
+                                    <div class="popular__data-group">
+                                        <i class="ri-timer-2-line"></i> @car.HorsePower hp
+                                    </div>
+                                    <div class="popular__data-group">
+                                        <i class="ri-hashtag"></i> @car.LicensePlate
+                                    </div>
+                                </div>
 
-                <h1 class="popular__title">Porsche</h1>
-                <h3 class="popular__subtitle">Boxster 718</h3>
-
-                <img src="./img/popular4.png" alt="" class="popular__img">
-
-                <div class="popular__data">
-                    <div class="popular__data-group">
-                        <i class="ri-dashboard-2-line"></i> 3.7 sec
+                                <div class="popular__dates">
+                                    <span><i class="ri-shield-check-line"></i> ГО: @car.InsuranceExpiryDate.ToString("dd.MM.yyyy")</span>
+                                    <span><i class="ri-tools-line"></i> ГТП: @car.InspectionExpiryDate.ToString("dd.MM.yyyy")</span>
+                                    <span><i class="ri-roadster-line"></i> Винетка: @car.VignetteExpiryDate.ToString("dd.MM.yyyy")</span>
+                                </div>
+                            </article>
+                        }
                     </div>
-                    <div class="popular__data-group">
-                        <i class="ri-exchange-funds-line"></i> 356 Km/h
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-charging-pile-2-line"></i> Electric
-                    </div>
+                    @if (totalPages > 1)
+                    {
+                        <div class="swiper-pagination">
+                            @for (var i = 0; i < totalPages; i++)
+                            {
+                                <button type="button"
+                                        class="swiper-pagination-bullet mycars__pagination-bullet @(currentPage == i ? "swiper-pagination-bullet-active" : string.Empty)"
+                                        aria-label=$"Страница {i + 1}"
+                                @onclick="() => SetPage(i)">
+                                    ●
+                                </button>
+                            }
+                        </div>
+                    }
                 </div>
-
-                <h3 class="popular__price">$125,900</h3>
-                <button class="button popular__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-
-            <article class="popular__card swiper-slide">
-                <div class="shapeX shape__smaller"></div>
-
-                <h1 class="popular__title">Porsche</h1>
-                <h3 class="popular__subtitle">Cayman</h3>
-
-                <img src="./img/popular5.png" alt="" class="popular__img">
-
-                <div class="popular__data">
-                    <div class="popular__data-group">
-                        <i class="ri-dashboard-2-line"></i> 3.7 sec
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-exchange-funds-line"></i> 356 Km/h
-                    </div>
-                    <div class="popular__data-group">
-                        <i class="ri-charging-pile-2-line"></i> Electric
-                    </div>
-                </div>
-
-                <h3 class="popular__price">$128,900</h3>
-                <button class="button popular__button">
-                    <i class="ri-shopping-bag-2-line"></i>
-                </button>
-
-            </article>
-        </div>
-
-        <div class="swiper-pagination"></div>
-    </div>
-
-</section>
+            }
+        </section>
+    </Authorized>
+</AuthorizeView>
 
 @code {
+    private const int PageSize = 3;
+    private List<Vehicle> cars = new();
+    private bool isLoading = true;
+    private string? errorMessage;
+    private int currentPage = 0;
+    private int totalPages = 0;
+    private Timer? autoPageTimer;
 
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateTask;
+        var isAuthenticated = authenticationState.User.Identity?.IsAuthenticated ?? false;
+
+        if (!isAuthenticated)
+        {
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            cars = await CarService.GetCurrentUserCarsAsync();
+            totalPages = (int)Math.Ceiling((double)cars.Count / PageSize);
+            currentPage = totalPages > 0 ? Math.Min(currentPage, totalPages - 1) : 0;
+            StartAutoPaging();
+        }
+        catch (Exception)
+        {
+            errorMessage = "Неуспешно зареждане на автомобилите ви.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        autoPageTimer?.Dispose();
+    }
+
+    private IEnumerable<Vehicle> CurrentPageCars => cars.Skip(currentPage * PageSize).Take(PageSize);
+
+    private void SetPage(int pageIndex)
+    {
+        if (pageIndex < 0 || pageIndex >= totalPages)
+        {
+            return;
+        }
+
+        currentPage = pageIndex;
+        StateHasChanged();
+    }
+
+    private void NextPage()
+    {
+        if (totalPages <= 1)
+        {
+            return;
+        }
+
+        currentPage = (currentPage + 1) % totalPages;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void StartAutoPaging()
+    {
+        autoPageTimer?.Dispose();
+
+        if (totalPages <= 1)
+        {
+            return;
+        }
+
+        autoPageTimer = new Timer(_ => NextPage(), null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+    }
+
+    private static string GetPrimaryImage(Vehicle car)
+    {
+        return car.Images.FirstOrDefault()?.ImagePath ?? "/img/popular1.png";
+    }
+
+    private static string GetCarAlt(Vehicle car)
+    {
+        return $"{car.Brand} {car.Model}";
+    }
 }
+
+<style>
+    .mycars__pagination-bullet {
+        color: #fff;
+        background: transparent;
+        border: none;
+    }
+
+    .mycars__pagination-bullet:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+</style>

@@ -38,6 +38,33 @@ namespace MyCarInfo.Services.Car
                 .ToListAsync();
         }
 
+        public async Task<List<Vehicle>> GetCurrentUserCarsAsync()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext is null)
+            {
+                return new List<Vehicle>();
+            }
+
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = await userManager.GetUserAsync(httpContext.User);
+
+            if (user is null)
+            {
+                return new List<Vehicle>();
+            }
+
+            return await context.Cars
+                .Where(c => c.UserId == user.Id)
+                .Include(c => c.Images)
+                .Include(c => c.User)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<Vehicle?> GetCarByIdAsync(int id)
         {
             await using var scope = _scopeFactory.CreateAsyncScope();

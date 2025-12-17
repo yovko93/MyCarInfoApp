@@ -331,9 +331,9 @@ a.nav__link.btn-link {
     z-index: 888;
     position: relative;
     border: 2px solid hsl(158, 89%, 30%);
-    width: 80px;
+    width: 90px;
     height: 75px;
-    border-radius: 80%;
+    border-radius: 70%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -347,8 +347,8 @@ a.nav__link.btn-link {
     .home__button::before {
         content: '';
         border: 2px solid hsl(158, 98%, 43%);
-        width: 90px;
-        height: 90px;
+        width: 100px;
+        height: 95px;
         position: absolute;
         border-radius: 50%;
         box-shadow: 0 0 12px hsl(158, 98%, 43%);
