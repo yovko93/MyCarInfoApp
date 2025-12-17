@@ -243,8 +243,10 @@ a.nav__link.btn-link {
     color: var(--first-color);
 }
 
+.nav__link.btn-link {
+    cursor: pointer;
+}
 /*=============== HOME ===============*/
-
 .home {
     position: relative;
     overflow: hidden;
@@ -329,9 +331,9 @@ a.nav__link.btn-link {
     z-index: 888;
     position: relative;
     border: 2px solid hsl(158, 89%, 30%);
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
+    width: 80px;
+    height: 75px;
+    border-radius: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -738,8 +740,8 @@ a.nav__link.btn-link {
     object-fit: cover;
 }
 
-gallery__details{
-/*    TODO car details*/
+gallery__details {
+    /*    TODO car details*/
 }
 
 /*=============== OFFER ===============*/
@@ -1300,6 +1302,27 @@ gallery__details{
     padding: 0.5rem;
     margin: 0;
 }
+
+/* Success */
+/*.auth__alert.success {
+        background-color: #d4edda;*/ /* Light green */
+/*color: #155724;*/ /* Dark green text */
+/*border-color: #c3e6cb;*/ /* Green border */
+/*}*/
+
+/* Warning */
+/*.auth__alert.warning {
+        background-color: #fff3cd;*/ /* Light yellow */
+/*color: #856404;*/ /* Dark yellow text */
+/*border-color: #ffeeba;*/ /* Yellow border */
+/*}*/
+
+/* Information */
+/*.auth__alert.info {
+        background-color: #d1ecf1;*/ /* Light blue */
+/*color: #0c5460;*/ /* Dark blue text */
+/*border-color: #bee5eb;*/ /* Blue border */
+/*}*/
 
 .auth__grid {
     display: grid;

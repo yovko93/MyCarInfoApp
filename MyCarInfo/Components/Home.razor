@@ -1,58 +1,89 @@
 ﻿<!--==================== HOME ====================-->
+@using MyCarInfo.Data
+@inject ICarService CarService
+
 <section class="home section" id="home">
     <div class="shapeX shape__big"></div>
     <div class="shapeX shape__small"></div>
 
     <div class="home__container container grid">
-        <div class="home__data">
-            <h1 class="home__title">
-                Pick Your Best Car
-            </h1>
-            <h2 class="home__subtitle">
-                Ferrari 458
-            </h2>
-            <h3 class="home__elec">
-                <i class="ri-flashlight-fill"></i>
-                RELENTLESS FORCE
-            </h3>
-        </div>
-
-        <img src="./img/home5.png" alt="" class="home__img">
-        <div class="home__car">
-            <div class="home__car-data">
-                <div class="home__car-icon">
-                    <i class="ri-temp-cold-line"></i>
-                </div>
-                <h2 class="home__car-number">3.0s</h2>
-                <h3 class="home__car-name">0-100 km/h</h3>
+        @if (isLoading)
+        {
+            <div class="home__data">
+                <h1 class="home__title">Зареждане...</h1>
+                <h3 class="home__elec">
+                    <i class="ri-refresh-line"></i>
+                    Моля, изчакайте
+                </h3>
             </div>
-
-            <div class="home__car-data">
-                <div class="home__car-icon">
-                    <i class="ri-dashboard-2-line"></i>
-                </div>
-                <h2 class="home__car-number">419</h2>
-                <h3 class="home__car-name">POWER (KW)</h3>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="home__data">
+                <h1 class="home__title">Възникна грешка</h1>
+                <h3 class="home__elec">
+                    <i class="ri-alert-line"></i>
+                    @errorMessage
+                </h3>
             </div>
-
-            <div class="home__car-data">
-                <div class="home__car-icon">
-                    <i class="ri-flashlight-fill"></i>
-                </div>
-                <h2 class="home__car-number">325 km/h</h2>
-                <h3 class="home__car-name">MAX. SPEED</h3>
+        }
+        else if (featuredCar is null)
+        {
+            <div class="home__data">
+                <h1 class="home__title">Все още няма автомобили</h1>
+                <h3 class="home__elec">
+                    <i class="ri-roadster-line"></i>
+                    Добавете първия си автомобил, за да го видите тук
+                </h3>
             </div>
-        </div>
-
-        <a href="#" class="home__button">START</a>
-
-        <div class="slider__bg">
-            <div class="slider__bg-navBtn active"></div>
-            <div class="slider__bg-navBtn"></div>
-            <div class="slider__bg-navBtn"></div>
-            <div class="slider__bg-navBtn"></div>
-            <div class="slider__bg-navBtn"></div>
-        </div>
+        }
+        else
+        {
+            <div class="home__data">
+                <h1 class="home__title">
+                    Избрана кола за вас
+                </h1>
+                <h2 class="home__subtitle">
+                    @($"{featuredCar.Brand} {featuredCar.Model}")
+                </h2>
+                <h3 class="home__elec">
+                    <i class="ri-engine-line"></i>
+                    @featuredCar.Engine
+                </h3>
+            </div>
+            <img src="@GetHeroImage(featuredCar)" alt="@GetCarAlt(featuredCar)" class="home__img">
+            <div class="home__car">
+                <div class="home__car-data">
+                    <div class="home__car-icon">
+                        <i class="ri-dashboard-2-line"></i>
+                    </div>
+                    <h2 class="home__car-number">@featuredCar.HorsePower hp</h2>
+                    <h3 class="home__car-name">Мощност</h3>
+                </div>
+                <div class="home__car-data">
+                    <div class="home__car-icon">
+                        <i class="ri-palette-line"></i>
+                    </div>
+                    <h2 class="home__car-number">@featuredCar.Color</h2>
+                    <h3 class="home__car-name">Цвят</h3>
+                </div>
+                <div class="home__car-data">
+                    <div class="home__car-icon">
+                        <i class="ri-roadster-line"></i>
+                    </div>
+                    <h2 class="home__car-number">@featuredCar.LicensePlate</h2>
+                    <h3 class="home__car-name">Рег. номер</h3>
+                </div>
+            </div>
+            <a href="#gallery" class="home__button">Виж всички</a>
+            <div class="slider__bg">
+                <div class="slider__bg-navBtn active"></div>
+                <div class="slider__bg-navBtn"></div>
+                <div class="slider__bg-navBtn"></div>
+                <div class="slider__bg-navBtn"></div>
+                <div class="slider__bg-navBtn"></div>
+            </div>
+        }
     </div>
     <div class="home__social">
         <a href="#" class="home__social-icon"><i class="ri-facebook-fill"></i></a>
@@ -63,5 +94,38 @@
 
 
 @code {
+    private readonly Random random = new();
+    private Vehicle? featuredCar;
+    private bool isLoading = true;
+    private string? errorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cars = await CarService.GetAllCarsAsync();
+            if (cars.Count > 0)
+            {
+                featuredCar = cars[random.Next(cars.Count)];
+            }
+        }
+        catch (Exception)
+        {
+            errorMessage = "Неуспешно зареждане на автомобилите.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string GetHeroImage(Vehicle car)
+    {
+        return car.Images.FirstOrDefault()?.ImagePath ?? "/img/home5.png";
+    }
+
+    private static string GetCarAlt(Vehicle car)
+    {
+        return $"{car.Brand} {car.Model}";
+    }
 }
