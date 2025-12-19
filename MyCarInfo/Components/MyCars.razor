@@ -69,15 +69,14 @@
                     </div>
                     @if (totalPages > 1)
                     {
-                        <div class="swiper-pagination">
+                        <div class="slider__bg">
                             @for (var i = 0; i < totalPages; i++)
                             {
-                                <button type="button"
-                                        class="swiper-pagination-bullet mycars__pagination-bullet @(currentPage == i ? "swiper-pagination-bullet-active" : string.Empty)"
-                                        aria-label=$"Страница {i + 1}"
-                                @onclick="() => SetPage(i)">
-                                    ●
-                                </button>
+                                <div class="slider__bg-navBtn @(currentPage == i ? "active" : string.Empty)"
+                                     role="button"
+                                     tabindex="0"
+                                     @onclick="() => SetPage(i)">
+                                </div>
                             }
                         </div>
                     }
@@ -178,16 +177,3 @@
         return $"{car.Brand} {car.Model}";
     }
 }
-
-<style>
-    .mycars__pagination-bullet {
-        color: #fff;
-        background: transparent;
-        border: none;
-    }
-
-    .mycars__pagination-bullet:focus-visible {
-        outline: 2px solid #fff;
-        outline-offset: 2px;
-    }
-</style>

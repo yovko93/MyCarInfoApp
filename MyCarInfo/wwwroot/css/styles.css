@@ -610,13 +610,13 @@ a.nav__link.btn-link {
 
 /* Swiper class */
 
-.swiper-pagination-bullet {
+/*.swiper-pagination-bullet {
     background: var(--text-color);
 }
 
 .swiper-pagination-bullet-active {
     background-color: var(--first-color);
-}
+}*/
 
 
 /*=============== GALLERY ===============*/
