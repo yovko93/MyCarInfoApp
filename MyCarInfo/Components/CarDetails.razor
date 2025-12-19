@@ -6,6 +6,7 @@
 @attribute [Authorize]
 @inject ICarService CarService
 @inject NavigationManager Navigation
+@inject IImageService ImageService
 
 <PageTitle>Car Details</PageTitle>
 
@@ -179,6 +180,33 @@
                             </button>
                         </div>
 
+                        <div class="input__group file-upload">
+                            <label class="input__label">Снимки на автомобила</label>
+                            <InputFile OnChange="HandleFileSelected" multiple accept="image/*" disabled="@(!isOwner)" />
+                            <p class="input__hint">Позволени са до 5 изображения (.jpg, .jpeg, .png, .webp) с размер до 5 MB всяко.</p>
+
+                            @if (!string.IsNullOrWhiteSpace(uploadError))
+                            {
+                                <div class="alert alert-warning">@uploadError</div>
+                            }
+
+                            @if (editModel.ImagePaths.Any())
+                            {
+                                <div class="preview-grid">
+                                    @foreach (var image in editModel.ImagePaths)
+                                    {
+                                        <div class="preview-card">
+                                            <button type="button" class="preview-card__remove" @onclick="@(() => RemoveImage(image))" disabled="@(!isOwner)">
+                                                <i class="ri-close-line"></i>
+                                                Премахни
+                                            </button>
+                                            <img src="@image" alt="Car image" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
                         @if (statusMessage is not null)
                         {
                             <div class="alert @(isSuccessMessage ? "alert-success" : "alert-warning")">
@@ -206,6 +234,10 @@
         ["onclick"] = "this.showPicker()"
     };
 
+    private const long MaxFileSize = 5 * 1024 * 1024;
+    private const int MaxFileCount = 5;
+    private static readonly string[] AllowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
     private Vehicle? car;
     private CarModel editModel = new();
     private bool isOwner;
@@ -214,6 +246,7 @@
     private bool isSuccessMessage;
     private string? statusMessage;
     private string? errorMessage;
+    private string? uploadError;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -295,6 +328,56 @@
         {
             isSaving = false;
         }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        if (!isOwner)
+        {
+            return;
+        }
+
+        uploadError = null;
+
+        var remainingSlots = MaxFileCount - editModel.ImagePaths.Count;
+        if (remainingSlots <= 0)
+        {
+            uploadError = $"Можеш да добавиш до {MaxFileCount} снимки.";
+            return;
+        }
+
+        var selectedFiles = e.GetMultipleFiles(remainingSlots);
+
+        var uploadResult = await ImageService.SaveImagesAsync(
+            selectedFiles,
+            "uploads/cars",
+            MaxFileSize,
+            remainingSlots,
+            AllowedExtensions);
+
+        uploadError = uploadResult.Errors.Any()
+            ? string.Join(" ", uploadResult.Errors.Distinct())
+            : null;
+
+        foreach (var relativePath in uploadResult.SavedPaths)
+        {
+            if (!editModel.ImagePaths.Contains(relativePath))
+            {
+                editModel.ImagePaths.Add(relativePath);
+            }
+        }
+    }
+
+    private void RemoveImage(string imagePath)
+    {
+        if (!isOwner || string.IsNullOrWhiteSpace(imagePath))
+        {
+            return;
+        }
+
+        ImageService.DeleteImage(imagePath);
+
+        editModel.ImagePaths.Remove(imagePath);
     }
 
     private void ApplyChangesToCar()
