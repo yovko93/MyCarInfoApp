@@ -13,5 +13,17 @@ namespace MyCarInfo.Data
 
         public DbSet<Vehicle> Cars { get; set; }
         public DbSet<CarImage> CarImages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

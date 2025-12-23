@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyCarInfo.Data;
 
@@ -11,9 +12,11 @@ using MyCarInfo.Data;
 namespace MyCarInfo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251219231145_Add Notification entity")]
+    partial class AddNotificationentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,42 +267,16 @@ namespace MyCarInfo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Channel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DocumentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsSent")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SentAt")
+                    b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("VehicleId");
 
@@ -420,19 +397,11 @@ namespace MyCarInfo.Migrations
 
             modelBuilder.Entity("MyCarInfo.Data.Notification", b =>
                 {
-                    b.HasOne("MyCarInfo.Data.ApplicationUser", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MyCarInfo.Data.Vehicle", "Vehicle")
                         .WithMany("Notifications")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
 
                     b.Navigation("Vehicle");
                 });
@@ -451,8 +420,6 @@ namespace MyCarInfo.Migrations
             modelBuilder.Entity("MyCarInfo.Data.ApplicationUser", b =>
                 {
                     b.Navigation("Cars");
-
-                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("MyCarInfo.Data.Vehicle", b =>

@@ -9,5 +9,6 @@ namespace MyCarInfo.Data
         public int Age { get; set; }
 
         public List<Vehicle> Cars { get; set; } = new();
+        public List<Notification> Notifications { get; set; } = new List<Notification>();
     }
 }
