@@ -68,25 +68,25 @@
                     </div>
 
                     <div class="car-details__dates">
-                        <div class="car-details__date">
+                        <div class="car-details__date @GetExpiryClass(car.InsuranceExpiryDate)">
                             <i class="ri-shield-check-line"></i>
                             <div>
                                 <p class="car-details__label">Гражданска отговорност</p>
-                                <strong>@FormatDate(car.InsuranceExpiryDate)</strong>
+                                <strong>@FormatDate(editModel.InsuranceExpiryDate)</strong>
                             </div>
                         </div>
-                        <div class="car-details__date">
+                        <div class="car-details__date @GetExpiryClass(car.InspectionExpiryDate)">
                             <i class="ri-tools-line"></i>
                             <div>
                                 <p class="car-details__label">Годишен технически преглед</p>
-                                <strong>@FormatDate(car.InspectionExpiryDate)</strong>
+                                <strong>@FormatDate(editModel.InspectionExpiryDate)</strong>
                             </div>
                         </div>
-                        <div class="car-details__date">
+                        <div class="car-details__date @GetExpiryClass(car.VignetteExpiryDate)">
                             <i class="ri-roadster-line"></i>
                             <div>
                                 <p class="car-details__label">Винетка</p>
-                                <strong>@FormatDate(car.VignetteExpiryDate)</strong>
+                                <strong>@FormatDate(editModel.VignetteExpiryDate)</strong>
                             </div>
                         </div>
                     </div>
@@ -424,5 +424,27 @@
     private static string FormatDate(DateTime date)
     {
         return date.ToString("dd.MM.yyyy");
+    }
+
+    private static string GetExpiryClass(DateTime date)
+    {
+        var daysToExpiry = (date.Date - DateTime.Today).TotalDays;
+
+        if (daysToExpiry <= 0)
+        {
+            return "car-details__date--expired";
+        }
+
+        if (daysToExpiry <= 7)
+        {
+            return "car-details__date--week";
+        }
+
+        if (daysToExpiry <= 14)
+        {
+            return "car-details__date--twoweeks";
+        }
+
+        return string.Empty;
     }
 }

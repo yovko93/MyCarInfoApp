@@ -1587,7 +1587,6 @@ gallery__details {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-size: 0.75rem;
-    color: #8fa3b8;
     margin: 0 0 0.25rem;
 }
 
@@ -1661,6 +1660,21 @@ gallery__details {
     border: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(255, 255, 255, 0.02);
     color: #fff;
+}
+
+.car-details__date--twoweeks {
+    background: #f9e79f;
+    color: #010614;
+}
+
+.car-details__date--week {
+    background: #d98023;
+    color: #010614;
+}
+
+.car-details__date--expired {
+    background: #e74c3c;
+    color: #010614;
 }
 
     .car-details__date i {
