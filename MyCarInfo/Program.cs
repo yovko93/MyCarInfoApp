@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarInfo.Data;
+using MyCarInfo.Models.Options;
 using MyCarInfo.Services.Authentication;
 using MyCarInfo.Services.Car;
 using MyCarInfo.Services.Image;
+using MyCarInfo.Services.Notification;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +32,17 @@ builder.Services.AddScoped<IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<IdentityRevalidatingAuthenticationStateProvider>());
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<ViberOptions>(builder.Configuration.GetSection("Viber"));
+builder.Services.Configure<NotificationOptions>(builder.Configuration.GetSection("Notifications"));
+
+builder.Services.AddHttpClient<IViberNotificationService, ViberNotificationService>();
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
