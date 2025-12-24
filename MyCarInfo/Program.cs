@@ -41,7 +41,6 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.Configure<ViberOptions>(builder.Configuration.GetSection("Viber"));
 builder.Services.Configure<NotificationOptions>(builder.Configuration.GetSection("Notifications"));
 
-builder.Services.AddHttpClient<IViberNotificationService, ViberNotificationService>();
 builder.Services.AddHostedService<NotificationBackgroundService>();
 
 // Add services to the container.

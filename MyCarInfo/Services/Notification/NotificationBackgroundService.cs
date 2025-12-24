@@ -9,25 +9,22 @@
     public class NotificationBackgroundService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IViberNotificationService _viberNotificationService;
         private readonly ILogger<NotificationBackgroundService> _logger;
         private readonly NotificationOptions _options;
 
         public NotificationBackgroundService(
             IServiceScopeFactory scopeFactory,
-            IViberNotificationService viberNotificationService,
             IOptions<NotificationOptions> options,
             ILogger<NotificationBackgroundService> logger)
         {
             _scopeFactory = scopeFactory;
-            _viberNotificationService = viberNotificationService;
             _logger = logger;
             _options = options.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var delay = TimeSpan.FromMinutes(Math.Max(_options.CheckIntervalMinutes, NotificationOptions.DefaultCheckIntervalMinutes));
+            var delay = TimeSpan.FromDays(Math.Max(_options.CheckIntervalDays, NotificationOptions.DefaultCheckIntervalDays));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -108,7 +105,7 @@
                     UserId = vehicle.UserId,
                     DocumentType = documentType,
                     ExpiryDate = expiryDate.Date,
-                    Channel = "Viber",
+                    Channel = "",
                     Message = message,
                     IsSent = false,
                     CreatedAt = DateTime.UtcNow
@@ -120,8 +117,8 @@
                 //notification.SentAt = result.Succeeded ? DateTime.UtcNow : null;
                 //notification.ErrorMessage = result.Error;
 
-                await context.Notifications.AddAsync(notification, cancellationToken);
-                await context.SaveChangesAsync(cancellationToken);
+                //await context.Notifications.AddAsync(notification, cancellationToken);
+                //await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
