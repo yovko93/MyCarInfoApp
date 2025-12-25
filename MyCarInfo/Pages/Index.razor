@@ -1,19 +1,8 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.WebUtilities
-@implements IDisposable
-@inject NavigationManager NavigationManager
 
 <PageTitle>MyCarInfo App</PageTitle>
 
 <Header/>
-@if (showProfileSuccess)
-{
-    <section class="section home__notice">
-        <div class="container">
-            <div class="alert auth__alert auth__alert--success">Профилът беше обновен успешно.</div>
-        </div>
-    </section>
-}
 <Home/>
 <About/>
 <MyCars/>
@@ -21,42 +10,3 @@
 <Logos/>
 <GalleryBanner/>
 <Footer/>
-
-@code {
-    private bool showProfileSuccess;
-    private CancellationTokenSource? hideTokenSource;
-
-    protected override void OnInitialized()
-    {
-        var uri = new Uri(NavigationManager.Uri);
-        var query = QueryHelpers.ParseQuery(uri.Query);
-
-        if (query.TryGetValue("profileUpdated", out var value) && value == "true")
-        {
-            showProfileSuccess = true;
-            _ = HideSuccessMessageAsync();
-            NavigationManager.NavigateTo(uri.GetLeftPart(UriPartial.Path), replace: true);
-        }
-    }
-
-    private async Task HideSuccessMessageAsync()
-    {
-        hideTokenSource?.Cancel();
-        hideTokenSource = new CancellationTokenSource();
-
-        try
-        {
-            await Task.Delay(TimeSpan.FromSeconds(10), hideTokenSource.Token);
-            showProfileSuccess = false;
-            await InvokeAsync(StateHasChanged);
-        }
-        catch (TaskCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        hideTokenSource?.Cancel();
-    }
-}

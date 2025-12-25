@@ -20,7 +20,7 @@
         <div class="auth__card">
             <EditForm Model="profileModel" OnValidSubmit="HandleProfileUpdate" class="auth__form">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
+                <ValidationSummary class="alert auth__alert" />
                 @if (!string.IsNullOrEmpty(errorMessage))
                 {
                     <div class="alert auth__alert">@errorMessage</div>

@@ -125,8 +125,10 @@ img {
     overflow: hidden;
 }
 
+.popup__message {
+    text-align: center;
+}
 /* ======== Shape X Design ======*/
-
 .shapeX {
     background-color: hsla(219, 33%, 32%, .5);
     filter: blur(112px);
@@ -310,7 +312,8 @@ a.nav__link.btn-link {
 }
 
 .nav__profile:hover .nav__profile-menu,
-.nav__profile:focus-within .nav__profile-menu {
+/*.nav__profile:focus-within .nav__profile-menu*/
+.nav__profile--open .nav__profile-menu {
     display: flex;
 }
 
@@ -506,9 +509,6 @@ a.nav__link.btn-link {
     .video__slide.active {
         clip-path: circle(150% at 0 50%);
     }
-
-
-
 
 
 .home .shape__big,
@@ -1393,12 +1393,11 @@ gallery__details {
     margin: 0;
 }
 
-/* Success */
-/*.auth__alert.success {
-        background-color: #d4edda;*/ /* Light green */
-/*color: #155724;*/ /* Dark green text */
-/*border-color: #c3e6cb;*/ /* Green border */
-/*}*/
+.auth__alert--success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
 
 /* Warning */
 /*.auth__alert.warning {
@@ -1801,6 +1800,7 @@ gallery__details {
     background: #e74c3c;
     color: #fff;
 }
+
     .button--danger:hover {
         background: #cf3f30;
     }

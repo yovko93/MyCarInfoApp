@@ -25,7 +25,7 @@ namespace MyCarInfo.Models
         public string? NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Compare(nameof(NewPassword), ErrorMessage = "Новате парола не съвпада.")]
+        [Compare(nameof(NewPassword), ErrorMessage = "Новатa парола не съвпада.")]
         public string? ConfirmNewPassword { get; set; }
     }
 }
