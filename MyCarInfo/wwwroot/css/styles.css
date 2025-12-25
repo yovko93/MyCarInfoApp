@@ -311,7 +311,7 @@ a.nav__link.btn-link {
     z-index: var(--z-fixed);
 }
 
-.nav__profile:hover .nav__profile-menu,
+/*.nav__profile:hover .nav__profile-menu,*/
 /*.nav__profile:focus-within .nav__profile-menu*/
 .nav__profile--open .nav__profile-menu {
     display: flex;
@@ -601,7 +601,7 @@ a.nav__link.btn-link {
     padding-top: 1rem;
 }
 
-.popular__card {
+.mycar__card {
     position: relative;
     width: 238px;
     background-color: var(--container-color);
@@ -611,43 +611,43 @@ a.nav__link.btn-link {
     overflow: hidden;
 }
 
-    .popular__card .shape__smaller {
+    .mycar__card .shape__smaller {
         position: absolute;
         top: -2.5rem;
         left: -2.5rem;
     }
 
-.popular__title,
-.popular__subtitle,
-.popular__img {
+.mycar__title,
+.mycars__subtitle,
+.mycar__img {
     position: relative;
 }
 
-.popular__title {
+.mycar__title {
     font-size: var(--h2-font-size);
     margin-bottom: 0.25rem;
 }
 
-.popular__subtitle {
+.mycars__subtitle {
     font-size: var(--normal-font-size);
     color: var(--text-color);
     font-weight: 400;
 }
 
-.popular__img {
+.mycar__img {
     width: 160px;
     margin: .75rem 0 1.25rem 1.5rem;
     transition: .3s;
 }
 
-.popular__data {
+.mycar__data {
     display: grid;
-    grid-template-columns: repeat(2, max-content);
+    grid-template-columns: repeat(3, max-content);
     gap: .5rem 1.25rem;
     margin-bottom: 2rem;
 }
 
-.popular__data-group {
+.mycar__data-group {
     display: inline-flex;
     align-items: center;
     column-gap: .5rem;
@@ -655,32 +655,50 @@ a.nav__link.btn-link {
     color: var(--white-color);
 }
 
-.popular__data i {
+.mycar__data i {
     font-size: 1rem;
 }
 
-.popular__price {
-    font-size: var(--h3-font-size);
-}
-
-.popular__button {
-    border: none;
-    outline: none;
-    padding: .75rem 1rem;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    border-radius: 1rem 0 1rem 0;
-    cursor: pointer;
-}
-
-    .popular__button i {
-        font-size: 1.25rem;
-    }
-
-.popular__card:hover .popular__img {
+.mycar__card:hover .mycar__img {
     transform: translateY(-.5rem);
 }
+
+.mycar__dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: var(--smaller-font-size);
+    color: var(--white-color);
+}
+
+    .mycar__dates span {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+    }
+
+.my-cars__details-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .65rem 1.1rem;
+    border-radius: .75rem;
+    background: var(--first-color);
+    color: var(--white-color);
+    font-size: var(--smaller-font-size);
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 8px 18px rgba(13, 12, 12, 0.18);
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+    .my-cars__details-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(13, 12, 12, 0.22);
+        background: var(--first-color-alt);
+    }
 
 /* Swiper class */
 
@@ -834,49 +852,6 @@ gallery__details {
     /*    TODO car details*/
 }
 
-/*=============== OFFER ===============*/
-.offer {
-    position: relative;
-}
-
-.offer__container {
-    grid-template-rows: max-content 224px;
-}
-
-.offer__bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-.offer__data,
-.offer__img {
-    position: relative;
-}
-
-.offer__data {
-    text-align: center;
-}
-
-.offer__title {
-    margin-bottom: 2rem;
-}
-
-.offer__description {
-    margin-bottom: 3rem;
-}
-
-.offer__img {
-    position: absolute;
-    max-width: initial;
-    width: 400px;
-    bottom: 2rem;
-    right: -5.5rem;
-}
 /*=============== LOGOS ===============*/
 
 .logos__img {
@@ -1063,21 +1038,6 @@ gallery__details {
         grid-template-columns: repeat(2, 228px);
     }
 
-    .offer__container {
-        grid-template-rows: initial;
-        grid-template-columns: .5fr;
-        justify-content: center;
-    }
-
-    .offer__img {
-        position: relative;
-        bottom: initial;
-        right: initial;
-    }
-
-    .offer__data {
-        margin-bottom: 4rem;
-    }
 }
 
 @media screen and (min-width: 767px) {
@@ -1189,13 +1149,13 @@ gallery__details {
         padding-top: 3rem;
     }
 
-    .popular__card {
+    .mycar__card {
         width: 258px;
         border-radius: 1.15rem;
         margin-bottom: 5rem;
     }
 
-    .popular__img {
+    .mycar__img {
         width: 180px;
         margin: .75rem 0 1.25rem 2rem;
     }
@@ -1252,30 +1212,6 @@ gallery__details {
     .gallery__content {
         grid-template-columns: repeat(3, 248px);
         gap: 3rem;
-    }
-
-    .offer__container {
-        grid-template-columns: repeat(2, 1fr);
-        column-gap: 5rem;
-        align-items: center;
-        padding-bottom: 2rem;
-    }
-
-    .offer__data,
-    .offer__title {
-        text-align: initial;
-    }
-
-    .offer__data {
-        margin-bottom: 0;
-    }
-
-    .offer__description {
-        padding-right: 6rem;
-    }
-
-    .offer__img {
-        width: 450px;
     }
 
     .logos__container {

@@ -35,32 +35,32 @@
                     <div class="swiper-wrapper">
                         @foreach (var car in CurrentPageCars)
                         {
-                            <article class="popular__card swiper-slide">
+                            <article class="mycar__card swiper-slide">
                                 <div class="shapeX shape__smaller"></div>
 
-                                <h1 class="popular__title">@car.Brand</h1>
-                                <h3 class="popular__subtitle">@car.Model</h3>
+                                <h1 class="mycar__title">@car.Brand</h1>
+                                <h3 class="mycars__subtitle">@car.Model</h3>
 
-                                <img src="@GetPrimaryImage(car)" alt="@GetCarAlt(car)" class="popular__img">
+                                <img src="@GetPrimaryImage(car)" alt="@GetCarAlt(car)" class="mycar__img">
 
-                                <div class="popular__data">
-                                    <div class="popular__data-group">
-                                        <i class="ri-dashboard-2-line"></i> @car.Engine
+                                <div class="mycar__data">
+                                    <div class="mycar__data-group">
+                                       <i class="ri-dashboard-2-line"></i> @car.Engine
                                     </div>
-                                    <div class="popular__data-group">
+                                    <div class="mycar__data-group">
                                         <i class="ri-timer-2-line"></i> @car.HorsePower hp
                                     </div>
-                                    <div class="popular__data-group">
+                                    <div class="mycar__data-group">
                                         <i class="ri-hashtag"></i> @car.LicensePlate
                                     </div>
                                 </div>
 
-                                <div class="popular__dates">
+                                <div class="mycar__dates">
                                     <span><i class="ri-shield-check-line"></i> ГО: @car.InsuranceExpiryDate.ToString("dd.MM.yyyy")</span>
                                     <span><i class="ri-tools-line"></i> ГТП: @car.InspectionExpiryDate.ToString("dd.MM.yyyy")</span>
                                     <span><i class="ri-roadster-line"></i> Винетка: @car.VignetteExpiryDate.ToString("dd.MM.yyyy")</span>
                                 </div>
-                                <NavLink class="gallery__details-link" href="@($"/my-car/{car.Id}")">
+                                <NavLink class="my-cars__details-link" href="@($"/my-car/{car.Id}")">
                                     Детайли
                                     <i class="ri-arrow-right-line"></i>
                                 </NavLink>

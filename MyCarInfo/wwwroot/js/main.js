@@ -159,8 +159,8 @@ sr.reveal(`.home__img`, {delay: 800});
 sr.reveal(`.home__car-data, .footer__copy`, {delay: 900, interval: 100, origin: 'bottom'});
 sr.reveal(`.home__button`, {delay: 1000, origin: 'bottom'});
 
-sr.reveal(`.about__group, .offer__data`, {origin: 'left'});
-sr.reveal(`.about__data, .offer__img, .home__social-icon`, {origin: 'right'});
+//sr.reveal(`.about__group, .offer__data`, {origin: 'left'});
+//sr.reveal(`.about__data, .offer__img, .home__social-icon`, {origin: 'right'});
 
 sr.reveal(`.features__map, .slider__bg`, {delay:600, origin: 'bottom'});
 sr.reveal(`.features__card`, {interval: 300});
