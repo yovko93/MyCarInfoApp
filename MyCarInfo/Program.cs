@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarInfo.Data;
@@ -7,8 +8,15 @@ using MyCarInfo.Services.Authentication;
 using MyCarInfo.Services.Car;
 using MyCarInfo.Services.Image;
 using MyCarInfo.Services.Notification;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -57,17 +65,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
+app.UseSerilogRequestLogging();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/logout", async (SignInManager<ApplicationUser> signInManager) =>
+app.MapGet("/logout", async (SignInManager<ApplicationUser> signInManager, HttpContext httpContext, ILogger<Program> logger) =>
 {
+    var username = httpContext.User.Identity?.Name ?? "unknown";
     await signInManager.SignOutAsync();
+    logger.LogInformation("User logged out: {Username}", username);
     return Results.Redirect("/");
 }).RequireAuthorization();
 

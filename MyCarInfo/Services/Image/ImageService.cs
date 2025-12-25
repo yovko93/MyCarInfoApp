@@ -6,10 +6,14 @@ namespace MyCarInfo.Services.Image
     public class ImageService : IImageService
     {
         private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<ImageService> _logger;
 
-        public ImageService(IWebHostEnvironment environment)
+        public ImageService(
+            IWebHostEnvironment environment,
+            ILogger<ImageService> logger)
         {
             _environment = environment;
+            _logger = logger;
         }
 
         public async Task<ImageUploadResult> SaveImagesAsync(
@@ -53,6 +57,7 @@ namespace MyCarInfo.Services.Image
                 }
             }
 
+            _logger.LogInformation("Images saved successfully!");
             return result;
         }
 

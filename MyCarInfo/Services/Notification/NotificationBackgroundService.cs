@@ -25,11 +25,13 @@
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var delay = TimeSpan.FromDays(Math.Max(_options.CheckIntervalDays, NotificationOptions.DefaultCheckIntervalDays));
+            _logger.LogInformation("Notification background service started with interval {DelayDays} days.", delay.TotalDays);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
+                    _logger.LogInformation("Checking expiring documents for cars...");
                     await CheckExpiringDocumentsAsync(stoppingToken);
                 }
                 catch (Exception ex)
@@ -46,6 +48,8 @@
                     // Ignore cancellation exceptions when stopping the service
                 }
             }
+
+            _logger.LogInformation("Notification background service stopping.");
         }
 
         private async Task CheckExpiringDocumentsAsync(CancellationToken cancellationToken)
@@ -87,9 +91,9 @@
 
                 var existingNotification = await context.Notifications
                     .AsNoTracking()
-                    .AnyAsync(n => 
-                    n.VehicleId == vehicle.Id 
-                    && n.DocumentType == documentType 
+                    .AnyAsync(n =>
+                    n.VehicleId == vehicle.Id
+                    && n.DocumentType == documentType
                     && n.ExpiryDate == expiryDate.Date,
                     cancellationToken);
 
@@ -112,6 +116,15 @@
                     CreatedAt = DateTime.UtcNow
                 };
 
+                _logger.LogInformation(
+                    "Prepared notification for user {UserName} vehicle {VehicleId} ({Brand} {Model}) document {DocumentType} expiring {ExpiryDate:dd.MM.yyyy}.",
+                    vehicle.User.UserName,
+                    vehicle.Id,
+                    vehicle.Brand,
+                    vehicle.Model,
+                    documentType,
+                    expiryDate);
+
                 //var result = await _viberNotificationService.SendViberNotificationAsync(vehicle.User, message, cancellationToken);
 
                 //notification.IsSent = result.Succeeded;
@@ -123,7 +136,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, e.Message);
             }
         }
 

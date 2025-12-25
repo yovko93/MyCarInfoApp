@@ -9,13 +9,16 @@ namespace MyCarInfo.Services.Car
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<CarService> _logger;
 
         public CarService(
             IServiceScopeFactory scopeFactory,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<CarService> logger)
         {
             _scopeFactory = scopeFactory;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         public async Task<int> GetCarsCountAsync()
@@ -117,85 +120,104 @@ namespace MyCarInfo.Services.Car
                 user.Cars.Add(car);
                 await context.Cars.AddAsync(car);
                 await context.SaveChangesAsync();
+
+                _logger.LogInformation("Car registered for user {UserName}: {Brand} {Model} ({LicensePlate})", user.UserName, car.Brand, car.Model, car.LicensePlate);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
-                throw;
+                _logger.LogError(e, "Failed to register car.");
             }
         }
 
         public async Task UpdateCarAsync(CarModel carModel)
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to update a car.");
-
-            var car = await context.Cars
-                .Include(c => c.Images)
-                .FirstOrDefaultAsync(c => c.Id == carModel.Id);
-
-            if (car is null)
+            try
             {
-                throw new InvalidOperationException($"Car with id {carModel.Id} was not found.");
-            }
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            if (car.UserId != user.Id)
+                var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to update a car.");
+
+                var car = await context.Cars
+                    .Include(c => c.Images)
+                    .FirstOrDefaultAsync(c => c.Id == carModel.Id);
+
+                if (car is null)
+                {
+                    throw new InvalidOperationException($"Car with id {carModel.Id} was not found.");
+                }
+
+                if (car.UserId != user.Id)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to update this car.");
+                }
+
+                car.Brand = carModel.Brand;
+                car.Model = carModel.Model;
+                car.LicensePlate = carModel.LicensePlate;
+                car.Engine = carModel.Engine;
+                car.HorsePower = carModel.HorsePower;
+                car.Color = carModel.Color;
+                car.InsuranceExpiryDate = carModel.InsuranceExpiryDate;
+                car.InspectionExpiryDate = carModel.InspectionExpiryDate;
+                car.VignetteExpiryDate = carModel.VignetteExpiryDate;
+
+                carModel.ImagePaths ??= new List<string>();
+
+                var existingImagePaths = car.Images.Select(i => i.ImagePath).ToList();
+
+                var imagesToRemove = car.Images.Where(img => !carModel.ImagePaths.Contains(img.ImagePath)).ToList();
+                context.CarImages.RemoveRange(imagesToRemove);
+
+                var imagesToAdd = carModel.ImagePaths.Except(existingImagePaths);
+                foreach (var imagePath in imagesToAdd)
+                {
+                    car.Images.Add(new CarImage { ImagePath = imagePath });
+                }
+
+                await context.SaveChangesAsync();
+
+                _logger.LogInformation("Car updated for user {UserName}: {CarId} {Brand} {Model} ({LicensePlate})", user.UserName, car.Id, car.Brand, car.Model, car.LicensePlate);
+            }
+            catch (Exception e)
             {
-                throw new UnauthorizedAccessException("You are not authorized to update this car.");
+                _logger.LogError(e, "Failed to update car.");
             }
-
-            car.Brand = carModel.Brand;
-            car.Model = carModel.Model;
-            car.LicensePlate = carModel.LicensePlate;
-            car.Engine = carModel.Engine;
-            car.HorsePower = carModel.HorsePower;
-            car.Color = carModel.Color;
-            car.InsuranceExpiryDate = carModel.InsuranceExpiryDate;
-            car.InspectionExpiryDate = carModel.InspectionExpiryDate;
-            car.VignetteExpiryDate = carModel.VignetteExpiryDate;
-
-            carModel.ImagePaths ??= new List<string>();
-
-            var existingImagePaths = car.Images.Select(i => i.ImagePath).ToList();
-
-            var imagesToRemove = car.Images.Where(img => !carModel.ImagePaths.Contains(img.ImagePath)).ToList();
-            context.CarImages.RemoveRange(imagesToRemove);
-
-            var imagesToAdd = carModel.ImagePaths.Except(existingImagePaths);
-            foreach (var imagePath in imagesToAdd)
-            {
-                car.Images.Add(new CarImage { ImagePath = imagePath });
-            }
-
-            await context.SaveChangesAsync();
         }
 
         public async Task DeleteCarAsync(int id)
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to delete a car.");
-
-            var car = await context.Cars.FirstOrDefaultAsync(c => c.Id == id);
-            if (car is null || car.IsDeleted)
+            try
             {
-                return;
-            }
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            if (car.UserId != user.Id)
+                var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to delete a car.");
+
+                var car = await context.Cars.FirstOrDefaultAsync(c => c.Id == id);
+                if (car is null || car.IsDeleted)
+                {
+                    return;
+                }
+
+                if (car.UserId != user.Id)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to delete this car.");
+                }
+
+                car.IsDeleted = true;
+                await context.SaveChangesAsync();
+
+                _logger.LogInformation("Car deleted for user {UserName}: {CarId} {Brand} {Model} ({LicensePlate})", user.UserName, car.Id, car.Brand, car.Model, car.LicensePlate);
+            }
+            catch (Exception e)
             {
-                throw new UnauthorizedAccessException("You are not authorized to delete this car.");
+                _logger.LogError(e, "Failed to delete car.");
             }
-
-            car.IsDeleted = true;
-            await context.SaveChangesAsync();
         }
     }
 }

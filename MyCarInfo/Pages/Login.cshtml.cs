@@ -9,10 +9,14 @@ namespace MyCarInfo.Pages
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager)
+        public LoginModel(
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -60,9 +64,11 @@ namespace MyCarInfo.Pages
 
             if (result.Succeeded)
             {
+                _logger.LogInformation("User logged in: {Username}", Input.Username);
                 return LocalRedirect(ReturnUrl);
             }
 
+            _logger.LogWarning("Failed login attempt for {Username}", Input.Username);
             ErrorMessage = "Невалиден потребител или грешна парола!";
             return Page();
         }
