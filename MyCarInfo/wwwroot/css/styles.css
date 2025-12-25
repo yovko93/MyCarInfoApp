@@ -262,6 +262,80 @@ a.nav__link.btn-link {
 .nav__link.btn-link {
     cursor: pointer;
 }
+
+.home__notice {
+    padding: 1rem 0 0;
+}
+
+.nav__profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav__profile-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    border: none;
+    color: var(--title-color);
+    font-size: var(--normal-font-size);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+    .nav__profile-toggle i {
+        font-size: 1.1rem;
+    }
+
+    .nav__profile-toggle:hover,
+    .nav__profile-toggle:focus-visible {
+        color: var(--first-color);
+    }
+
+.nav__profile-menu {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    display: none;
+    flex-direction: column;
+    min-width: 180px;
+    padding: 0.5rem;
+    background: var(--body-color);
+    border: 1px solid hsla(0, 0%, 100%, 0.08);
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    z-index: var(--z-fixed);
+}
+
+.nav__profile:hover .nav__profile-menu,
+.nav__profile:focus-within .nav__profile-menu {
+    display: flex;
+}
+
+.nav__profile-link {
+    background: transparent;
+    border: none;
+    color: var(--title-color);
+    font-size: 0.9rem;
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    text-transform: none;
+}
+
+    .nav__profile-link:hover,
+    .nav__profile-link:focus-visible {
+        background: hsla(0, 0%, 100%, 0.08);
+        color: var(--first-color);
+    }
+
+.nav__profile-button {
+    width: 100%;
+}
 /*=============== HOME ===============*/
 .home {
     position: relative;

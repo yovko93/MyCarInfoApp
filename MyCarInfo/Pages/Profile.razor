@@ -1,0 +1,137 @@
+﻿@page "/profile"
+@attribute [Authorize]
+@using MyCarInfo.Data
+@inject IAuthService AuthService
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<section class="section auth">
+    <div class="container auth__container grid">
+        <div class="auth__intro">
+            <p class="section__title">Профил</p>
+            <h2 class="auth__headline">Управлявай своите лични данни</h2>
+            <p class="auth__description">
+                Актуализирай имейла, телефонния номер и имената си, за да получаваш най-точните
+                известия и персонализирани препоръки. Ако желаеш, можеш да смениш и паролата си.
+            </p>
+        </div>
+
+        <div class="auth__card">
+            <EditForm Model="profileModel" OnValidSubmit="HandleProfileUpdate" class="auth__form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert auth__alert">@errorMessage</div>
+                }
+
+                <div class="auth__grid">
+                    <div class="auth__field">
+                        <label for="profile-email">Имейл</label>
+                        <InputText id="profile-email" type="email" class="auth__input" placeholder="Имейл" @bind-Value="profileModel.Email" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="profile-phone">Телефонен номер</label>
+                        <InputText id="profile-phone" class="auth__input" placeholder="Телефонен номер" @bind-Value="profileModel.PhoneNumber" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="profile-firstName">Име</label>
+                        <InputText id="profile-firstName" class="auth__input" placeholder="Име" @bind-Value="profileModel.FirstName" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="profile-lastName">Фамилия</label>
+                        <InputText id="profile-lastName" class="auth__input" placeholder="Фамилия" @bind-Value="profileModel.LastName" />
+                    </div>
+                </div>
+
+                <div class="auth__grid">
+                    <div class="auth__field">
+                        <label for="current-password">Текуща парола</label>
+                        <InputText id="current-password" type="password" class="auth__input" placeholder="Текуща парола" @bind-Value="profileModel.CurrentPassword" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="new-password">Нова парола</label>
+                        <InputText id="new-password" type="password" class="auth__input" placeholder="Нова парола" @bind-Value="profileModel.NewPassword" />
+                    </div>
+                    <div class="auth__field">
+                        <label for="confirm-new-password">Потвърди новата парола</label>
+                        <InputText id="confirm-new-password" type="password" class="auth__input" placeholder="Потвърди новата парола" @bind-Value="profileModel.ConfirmNewPassword" />
+                    </div>
+                </div>
+
+                <button class="button auth__submit" type="submit">Запази промените</button>
+                <div class="auth__actions">
+                    <NavLink href="/" class="button auth__home">
+                        <i class="ri-home-5-line"></i>
+                        Към началната страница
+                    </NavLink>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="auth__intro">
+            <div class="auth__highlights">
+                <div class="auth__highlight">
+                    <i class="ri-user-line"></i>
+                    Управлявай данните си на едно място.
+                </div>
+                <div class="auth__highlight">
+                    <i class="ri-lock-password-line"></i>
+                    Обновявай паролата си, когато пожелаеш.
+                </div>
+                <div class="auth__highlight">
+                    <i class="ri-mail-line"></i>
+                    Поддържай актуална информация за връзка.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private ProfileUpdateModel profileModel = new();
+    private ApplicationUser? currentUser;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfileAsync();
+    }
+
+    private async Task LoadProfileAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = await UserManager.GetUserAsync(authState.User);
+
+        if (currentUser == null)
+        {
+            errorMessage = "Не успяхме да заредим профила. Моля, опитайте отново.";
+            return;
+        }
+
+        profileModel = new ProfileUpdateModel
+        {
+            Email = currentUser.Email ?? string.Empty,
+            PhoneNumber = currentUser.PhoneNumber,
+            FirstName = currentUser.FirstName,
+            LastName = currentUser.LastName
+        };
+    }
+
+    private async Task HandleProfileUpdate()
+    {
+        errorMessage = string.Empty;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var result = await AuthService.UpdateProfileAsync(profileModel, authState.User);
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/?profileUpdated=true");
+    }
+}

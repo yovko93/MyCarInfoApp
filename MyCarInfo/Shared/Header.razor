@@ -36,7 +36,17 @@
         <div class="nav__auth-buttons">
             <AuthorizeView>
                 <Authorized Context="authState">
-                    <a class="nav__link btn-link" @onclick="Logout">Изход</a>
+                    <div class="nav__profile">
+                        <button class="nav__profile-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="ri-user-3-line"></i>
+                            Профил
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="nav__profile-menu">
+                            <a href="/profile" class="nav__profile-link">Моите данни</a>
+                            <button class="nav__profile-link nav__profile-button" type="button" @onclick="Logout">Изход</button>
+                        </div>
+                    </div>
                 </Authorized>
                 <NotAuthorized>
                     <a href="/login" class="nav__link">Login</a>
