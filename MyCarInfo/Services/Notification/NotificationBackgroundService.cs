@@ -57,6 +57,7 @@
             var threshold = now.AddDays(14);
 
             var vehicles = await context.Cars
+                .Where(v => !v.IsDeleted)
                 .Include(v => v.User)
                 .ToListAsync(cancellationToken);
 

@@ -23,7 +23,9 @@ namespace MyCarInfo.Services.Car
             await using var scope = _scopeFactory.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            return await context.Cars.AsNoTracking().CountAsync();
+            return await context.Cars
+                .AsNoTracking()
+                .CountAsync(c => !c.IsDeleted);
         }
 
         public async Task<List<Vehicle>> GetAllCarsAsync()
@@ -32,6 +34,7 @@ namespace MyCarInfo.Services.Car
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             return await context.Cars
+                .Where(c => !c.IsDeleted)
                 .Include(c => c.Images)
                 .Include(c => c.User)
                 .AsNoTracking()
@@ -58,7 +61,7 @@ namespace MyCarInfo.Services.Car
             }
 
             return await context.Cars
-                .Where(c => c.UserId == user.Id)
+                .Where(c => c.UserId == user.Id && !c.IsDeleted)
                 .Include(c => c.Images)
                 .Include(c => c.User)
                 .AsNoTracking()
@@ -71,6 +74,7 @@ namespace MyCarInfo.Services.Car
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             return await context.Cars
+                .Where(c => !c.IsDeleted)
                 .Include(c => c.Images)
                 .Include(c => c.User)
                 .AsNoTracking()
@@ -175,12 +179,23 @@ namespace MyCarInfo.Services.Car
             await using var scope = _scopeFactory.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            var car = await context.Cars.FindAsync(id);
-            if (car != null)
+            var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("Missing HTTP context.");
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = await userManager.GetUserAsync(httpContext.User) ?? throw new InvalidOperationException("User must be logged in to delete a car.");
+
+            var car = await context.Cars.FirstOrDefaultAsync(c => c.Id == id);
+            if (car is null || car.IsDeleted)
             {
-                context.Cars.Remove(car);
-                await context.SaveChangesAsync();
+                return;
             }
+
+            if (car.UserId != user.Id)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to delete this car.");
+            }
+
+            car.IsDeleted = true;
+            await context.SaveChangesAsync();
         }
     }
 }

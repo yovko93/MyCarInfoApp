@@ -178,6 +178,13 @@
                                 <i class="ri-arrow-go-back-line"></i>
                                 Назад
                             </button>
+                            @if (isOwner)
+                            {
+                                <button type="button" class="button button--danger" @onclick="PromptDelete" disabled="@(isDeleting || isSaving)">
+                                    <i class="ri-delete-bin-line"></i>
+                                    Изтрий
+                                </button>
+                            }
                         </div>
 
                         <div class="input__group file-upload">
@@ -220,6 +227,24 @@
     </div>
 </section>
 
+@if (showDeleteConfirm)
+{
+    <div class="modal-backdrop">
+        <div class="modal-card">
+            <h3>Изтриване на автомобил</h3>
+            <p>Сигурни ли сте, че искате да изтриете този автомобил? Това действие ще скрие автомобила от всички списъци.</p>
+            <div class="modal-actions">
+                <button type="button" class="button button--danger" @onclick="ConfirmDelete" disabled="@isDeleting">
+                    @(isDeleting ? "Изтриване..." : "Потвърди изтриване")
+                </button>
+                <button type="button" class="button button--ghost" @onclick="CancelDelete" disabled="@isDeleting">
+                    Отказ
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter]
     public int Id { get; set; }
@@ -247,6 +272,8 @@
     private string? statusMessage;
     private string? errorMessage;
     private string? uploadError;
+    private bool isDeleting;
+    private bool showDeleteConfirm;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -409,6 +436,56 @@
     private void GoBack()
     {
         Navigation.NavigateTo("/");
+    }
+
+    private void PromptDelete()
+    {
+        if (!isOwner)
+        {
+            return;
+        }
+
+        showDeleteConfirm = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirm = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (!isOwner)
+        {
+            statusMessage = "Само собственикът може да изтрие този автомобил.";
+            isSuccessMessage = false;
+            showDeleteConfirm = false;
+            return;
+        }
+
+        isDeleting = true;
+        statusMessage = null;
+
+        try
+        {
+            await CarService.DeleteCarAsync(Id);
+            Navigation.NavigateTo("/");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            statusMessage = "Нямате права да изтриете този автомобил.";
+            isSuccessMessage = false;
+        }
+        catch (Exception)
+        {
+            statusMessage = "Възникна грешка при изтриване на автомобила.";
+            isSuccessMessage = false;
+        }
+        finally
+        {
+            isDeleting = false;
+            showDeleteConfirm = false;
+        }
     }
 
     private static string GetPrimaryImage(Vehicle vehicle)

@@ -12,6 +12,7 @@
         public DateTime InsuranceExpiryDate { get; set; }
         public DateTime InspectionExpiryDate { get; set; }
         public DateTime VignetteExpiryDate { get; set; }
+        public bool IsDeleted { get; set; }
         public int UserId { get; set; }
         public ApplicationUser User { get; set; }
         public ICollection<CarImage> Images { get; set; } = new List<CarImage>();

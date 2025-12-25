@@ -1677,10 +1677,10 @@ gallery__details {
     color: #010614;
 }
 
-    .car-details__date i {
-        font-size: 1.5rem;
-        color: #00c6ff;
-    }
+.car-details__date i {
+    font-size: 1.5rem;
+    color: #00c6ff;
+}
 
 .car-details__gallery {
     margin-top: 1.5rem;
@@ -1723,6 +1723,14 @@ gallery__details {
     color: #fff;
 }
 
+.button--danger {
+    background: #e74c3c;
+    color: #fff;
+}
+    .button--danger:hover {
+        background: #cf3f30;
+    }
+
 .alert {
     margin-top: 1rem;
     padding: 0.85rem 1rem;
@@ -1739,4 +1747,40 @@ gallery__details {
     background: rgba(255, 193, 7, 0.1);
     border: 1px solid rgba(255, 193, 7, 0.4);
     color: #ffe9a6;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(1, 6, 20, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+}
+
+.modal-card {
+    background: #0f172a;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    color: #fff;
+}
+
+    .modal-card h3 {
+        margin: 0 0 0.5rem;
+    }
+
+    .modal-card p {
+        margin: 0 0 1.25rem;
+        color: #cbd5f5;
+    }
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
