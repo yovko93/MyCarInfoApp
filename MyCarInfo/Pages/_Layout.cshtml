@@ -9,41 +9,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
 
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://code.jquery.com" />
+    <link rel="preconnect" href="https://stackpath.bootstrapcdn.com" />
+
     <!--=============== FAVICON ===============-->
-    <link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon" class="favicon">
+    <link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon" class="favicon" asp-append-version="true">
 
     <!--=============== REMIX ICONS ===============-->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 
     <!--=============== SWIPER CSS ===============-->
-    <link rel="stylesheet" href="./css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="./css/swiper-bundle.min.css" asp-append-version="true">
 
     <!--=============== CSS ===============-->
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css" asp-append-version="true">
 
     <title>My Car Info App</title>
 
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
-    @RenderBody()
+    <div class="preloader" id="preloader" role="status" aria-live="polite">
+        <div class="preloader__spinner" aria-hidden="true">
+            <span class="preloader__ring"></span>
+            <span class="preloader__ring preloader__ring--accent"></span>
+        </div>
+        <span class="preloader__text">Loading your garage...</span>
+    </div>
 
-    @* <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div> *@
+    @RenderBody()
 
     <script src="_framework/blazor.server.js"></script>
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" defer></script>
 
     <!--========== SCROLL UP ==========-->
 
@@ -52,16 +53,24 @@
     </a>
 
     <!--=============== SCROLL REVEAL - PAGE ANNIMATION ===============-->
-    <script src="./js/scrollrevealAnimation.min.js"></script>
+    <script src="~/js/scrollrevealAnimation.min.js" asp-append-version="true" defer></script>
 
     <!--=============== SWIPER JS - PRODUCT SLIDER ===============-->
-    <script src="./js/swiper-bundle.min.js"></script>
+    <script src="~/js/swiper-bundle.min.js" asp-append-version="true" defer></script>
 
     <!--=============== MIXITUP JS - FILTER PRODUCT ===============-->
-    <script src="./js/mixitup.min.js"></script>
+    <script src="~/js/mixitup.min.js" asp-append-version="true" defer></script>
 
     <!--=============== MAIN JS ===============-->
-    <script src="./js/main.js"></script>
+    <script src="~/js/main.js" asp-append-version="true" defer></script>
+    <script>
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if (!preloader) return;
+            preloader.classList.add('preloader--hide');
+            preloader.addEventListener('transitionend', () => preloader.remove());
+        });
+    </script>
 
     <script>
         // This example adds a marker to indicate the position of Bondi Beach in Sydney,
