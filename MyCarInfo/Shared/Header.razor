@@ -12,12 +12,12 @@
         </a>
         <div class="nav__menu" id="nav-menu">
             <ul class="nav__list">
-                <li class="nav__item"><a href="#about" class="nav__link ">About</a></li>
-                <li class="nav__item"><a href="#gallery" class="nav__link">Gallery</a></li>
+                <li class="nav__item"><a href="#about" class="nav__link ">За нас</a></li>
+                <li class="nav__item"><a href="#gallery" class="nav__link">Галерия</a></li>
                 <AuthorizeView>
                     <Authorized Context="authState">
-                        <li class="nav__item"><a href="#my-cars" class="nav__link">My Cars</a></li>
-                        <li class="nav__item"><a href="/register-car" class="nav__link">Add your Car</a></li>
+                        <li class="nav__item"><a href="#my-cars" class="nav__link">Моите коли</a></li>
+                        <li class="nav__item"><a href="/register-car" class="nav__link">Добави кола</a></li>
                     </Authorized>
                 </AuthorizeView>
             </ul>
@@ -43,14 +43,20 @@
                             <i class="ri-arrow-down-s-line"></i>
                         </button>
                         <div class="nav__profile-menu">
-                            <a href="/profile" class="nav__profile-link">Моите данни</a>
+                            <div class="nav__profile-section">
+                                <a href="/profile" class="nav__profile-link">Моите данни</a>
+                            </div>
+                            <div class="nav__profile-section">
+                                <a href="/changePassword" class="nav__profile-link">Промяна на парола</a>
+                            </div>
                             <button class="nav__profile-link nav__profile-button" type="button" @onclick="Logout">Изход</button>
                         </div>
                     </div>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login" class="nav__link">Login</a>
-                    <a href="/register" class="nav__link">Register</a>
+                    <a href="/login" class="nav__link">Вход</a>
+                    <span>/</span>
+                    <a href="/register" class="nav__link">Регистрация</a>
                 </NotAuthorized>
             </AuthorizeView>
         </div>

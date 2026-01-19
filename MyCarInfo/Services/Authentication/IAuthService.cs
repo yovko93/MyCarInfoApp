@@ -7,5 +7,6 @@ namespace MyCarInfo.Services.Authentication
     {
         Task<Result> RegisterAsync(RegisterModel model);
         Task<Result> UpdateProfileAsync(ProfileUpdateModel model, ClaimsPrincipal userPrincipal);
+        Task<Result> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userPrincipal);
     }
 }

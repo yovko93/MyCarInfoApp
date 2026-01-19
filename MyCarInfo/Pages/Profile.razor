@@ -1,4 +1,5 @@
 ﻿@page "/profile"
+
 @attribute [Authorize]
 @using MyCarInfo.Data
 @inject IAuthService AuthService
@@ -13,7 +14,7 @@
             <h2 class="auth__headline">Управлявай своите лични данни</h2>
             <p class="auth__description">
                 Актуализирай имейла, телефонния номер и имената си, за да получаваш най-точните
-                известия и персонализирани препоръки. Ако желаеш, можеш да смениш и паролата си.
+                известия и персонализирани препоръки.
             </p>
         </div>
 
@@ -45,21 +46,6 @@
                     </div>
                 </div>
 
-                <div class="auth__grid">
-                    <div class="auth__field">
-                        <label for="current-password">Текуща парола</label>
-                        <InputText id="current-password" type="password" class="auth__input" placeholder="Текуща парола" @bind-Value="profileModel.CurrentPassword" />
-                    </div>
-                    <div class="auth__field">
-                        <label for="new-password">Нова парола</label>
-                        <InputText id="new-password" type="password" class="auth__input" placeholder="Нова парола" @bind-Value="profileModel.NewPassword" />
-                    </div>
-                    <div class="auth__field">
-                        <label for="confirm-new-password">Потвърди новата парола</label>
-                        <InputText id="confirm-new-password" type="password" class="auth__input" placeholder="Потвърди новата парола" @bind-Value="profileModel.ConfirmNewPassword" />
-                    </div>
-                </div>
-
                 <button class="button auth__submit" type="submit">Запази промените</button>
                 <div class="auth__actions">
                     <NavLink href="/" class="button auth__home">
@@ -75,10 +61,6 @@
                 <div class="auth__highlight">
                     <i class="ri-user-line"></i>
                     Управлявай данните си на едно място.
-                </div>
-                <div class="auth__highlight">
-                    <i class="ri-lock-password-line"></i>
-                    Обновявай паролата си, когато пожелаеш.
                 </div>
                 <div class="auth__highlight">
                     <i class="ri-mail-line"></i>

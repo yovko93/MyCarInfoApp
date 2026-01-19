@@ -85,38 +85,36 @@ namespace MyCarInfo.Services.Authentication
                 return new Result { Succeeded = false, Error = updateError };
             }
 
-            var wantsPasswordUpdate = !string.IsNullOrWhiteSpace(model.CurrentPassword)
-                || !string.IsNullOrWhiteSpace(model.NewPassword)
-                || !string.IsNullOrWhiteSpace(model.ConfirmNewPassword);
+            _logger.LogInformation("Profile updated for {Username}.", user.UserName);
+            return new Result { Succeeded = true };
+        }
 
-            if (wantsPasswordUpdate)
+        public async Task<Result> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userPrincipal)
+        {
+            var user = await _userManager.GetUserAsync(userPrincipal);
+            if (user == null)
             {
-                if (string.IsNullOrWhiteSpace(model.CurrentPassword)
-                    || string.IsNullOrWhiteSpace(model.NewPassword)
-                    || string.IsNullOrWhiteSpace(model.ConfirmNewPassword))
-                {
-                    return new Result { Succeeded = false, Error = "За смяна на паролата попълни всички полета за парола." };
-                }
-
-                if (model.NewPassword != model.ConfirmNewPassword)
-                {
-                    return new Result { Succeeded = false, Error = "Новата парола не съвпада." };
-                }
-
-                var passwordResult = await _userManager.ChangePasswordAsync(
-                    user,
-                    model.CurrentPassword,
-                    model.NewPassword);
-
-                if (!passwordResult.Succeeded)
-                {
-                    var passwordError = string.Join(", ", passwordResult.Errors.Select(error => error.Description));
-                    _logger.LogWarning("Profile update failed for {Username}. Password errors: {Errors}", user.UserName, passwordError);
-                    return new Result { Succeeded = false, Error = passwordError };
-                }
+                _logger.LogWarning("Password update failed. User not found.");
+                return new Result { Succeeded = false, Error = "Не успяхме да заредим профила. Моля, опитайте отново." };
+            }
+            if (model.NewPassword != model.ConfirmNewPassword)
+            {
+                return new Result { Succeeded = false, Error = "Новата парола не съвпада." };
             }
 
-            _logger.LogInformation("Profile updated for {Username}.", user.UserName);
+            var passwordResult = await _userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword);
+
+            if (!passwordResult.Succeeded)
+            {
+                var passwordError = string.Join(", ", passwordResult.Errors.Select(error => error.Description));
+                _logger.LogWarning("Password update failed for {Username}. Password errors: {Errors}", user.UserName, passwordError);
+                return new Result { Succeeded = false, Error = passwordError };
+            }
+
+            _logger.LogInformation("Password updated for {Username}.", user.UserName);
             return new Result { Succeeded = true };
         }
     }

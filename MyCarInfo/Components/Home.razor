@@ -14,6 +14,15 @@
     </section>
 }
 
+@if (showPasswordSuccess)
+{
+    <section class="section home__notice">
+        <div class="container popup__message">
+            <div class="alert auth__alert auth__alert--success">Паролата беше обновена успешно.</div>
+        </div>
+    </section>
+}
+
 <section class="home section" id="home">
     <div class="shapeX shape__big"></div>
     <div class="shapeX shape__small"></div>
@@ -104,6 +113,7 @@
     private bool isLoading = true;
     private string? errorMessage;
     private bool showProfileSuccess;
+    private bool showPasswordSuccess;
     private CancellationTokenSource? hideTokenSource;
 
     protected override async Task OnInitializedAsync()
@@ -141,9 +151,16 @@
         var uri = new Uri(NavigationManager.Uri);
         var query = QueryHelpers.ParseQuery(uri.Query);
 
-        if (query.TryGetValue("profileUpdated", out var value) && value == "true")
+        if (query.TryGetValue("profileUpdated", out var profileUpdated) && profileUpdated == "true")
         {
             showProfileSuccess = true;
+            _ = HideSuccessMessageAsync();
+            NavigationManager.NavigateTo(uri.GetLeftPart(UriPartial.Path), replace: true);
+        }
+        
+        if (query.TryGetValue("passwordChanged", out var passwordChanged) && passwordChanged == "true")
+        {
+            showPasswordSuccess = true;
             _ = HideSuccessMessageAsync();
             NavigationManager.NavigateTo(uri.GetLeftPart(UriPartial.Path), replace: true);
         }
@@ -156,8 +173,9 @@
 
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(100), hideTokenSource.Token);
+            await Task.Delay(TimeSpan.FromSeconds(15), hideTokenSource.Token);
             showProfileSuccess = false;
+            showPasswordSuccess = false;
             await InvokeAsync(StateHasChanged);
         }
         catch (TaskCanceledException)
