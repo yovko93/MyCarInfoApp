@@ -13,25 +13,25 @@
 
             @if (isLoading)
             {
-                <div class="my-cars__container container">
+                <div class="car__container container">
                     <div class="popular__loading">Зареждаме информация за автомобилите ви...</div>
                 </div>
             }
             else if (!string.IsNullOrEmpty(errorMessage))
             {
-                <div class="my-cars__container container">
+                <div class="car__container container">
                     <div class="popular__error">@errorMessage</div>
                 </div>
             }
             else if (cars.Count == 0)
             {
-                <div class="my-cars__container container">
+                <div class="car__container container">
                     <div class="popular__empty">Все още нямате добавени автомобили.</div>
                 </div>
             }
             else
             {
-                <div class="my-cars__container container swiper">
+                <div class="car__container container swiper">
                     <div class="swiper-wrapper">
                         @foreach (var car in CurrentPageCars)
                         {

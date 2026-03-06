@@ -3,7 +3,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,6 +28,15 @@
     <title>My Car Info App</title>
 
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+            const theme = storedTheme || (prefersLight ? 'light' : 'dark');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 </head>
 <body>
     <div class="preloader" id="preloader" role="status" aria-live="polite">
@@ -63,6 +72,52 @@
 
     <!--=============== MAIN JS ===============-->
     <script src="~/js/main.js" asp-append-version="true" defer></script>
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const updateToggleState = () => {
+                const themeToggle = document.getElementById('theme-toggle');
+                if (!themeToggle) {
+                    return;
+                }
+
+                const theme = root.getAttribute('data-theme') || 'dark';
+                themeToggle.setAttribute('aria-pressed', theme === 'dark');
+
+                const icon = themeToggle.querySelector('i');
+                const label = themeToggle.querySelector('.nav__theme-label');
+
+                if (icon) {
+                    icon.className = theme === 'dark' ? 'ri-moon-line' : 'ri-sun-line';
+                }
+
+                if (label) {
+                    label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+                }
+            };
+
+            const toggleTheme = () => {
+                const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                root.setAttribute('data-theme', nextTheme);
+                localStorage.setItem('theme', nextTheme);
+                updateToggleState();
+            };
+
+            document.addEventListener('click', (event) => {
+                const target = event.target instanceof Element ? event.target.closest('#theme-toggle') : null;
+                if (!target) {
+                    return;
+                }
+
+                toggleTheme();
+            });
+
+            document.addEventListener('DOMContentLoaded', updateToggleState);
+            window.addEventListener('load', updateToggleState);
+        })();
+    </script>
+
     <script>
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');

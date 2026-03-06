@@ -59,7 +59,7 @@ if (btns.length && slides.length) {
 
 /*=============== POPULAR SWIPER ===============*/
 
-let swiperPopular = new Swiper(".my-cars__container", {
+let swiperPopular = new Swiper(".car__container", {
     loop: true,
     spaceBetween: 24,
     slidesPerView: 'auto',
@@ -152,7 +152,7 @@ const sr = ScrollReveal({
 })
 
 
-sr.reveal(`.home__title, .my-cars__container, .features__img, .gallery__filters`);
+sr.reveal(`.home__title, .car__container, .features__img, .gallery__filters`);
 sr.reveal(`.home__subtitle`, {delay: 500});
 sr.reveal(`.home__elec`, {delay: 600});
 sr.reveal(`.home__img`, {delay: 800});
