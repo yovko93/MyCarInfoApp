@@ -244,11 +244,20 @@ a.nav__link.btn-link {
 
 .header {
     width: 100%;
-    background-color: transparent;
+    background: linear-gradient(135deg, hsla(271, 53%, 35%, 0.9), hsla(220, 80%, 35%, 0.88));
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.15);
+    box-shadow: 0 10px 24px hsla(225, 60%, 5%, 0.35);
     position: fixed;
     top: 0;
     left: 0;
     z-index: var(--z-fixed);
+}
+
+[data-theme="light"] .header {
+    background: linear-gradient(135deg, hsla(271, 70%, 94%, 0.96), hsla(202, 93%, 90%, 0.95));
+    border-bottom: 1px solid hsla(220, 30%, 25%, 0.12);
+    box-shadow: 0 10px 24px hsla(220, 30%, 30%, 0.12);
 }
 
 .nav {
