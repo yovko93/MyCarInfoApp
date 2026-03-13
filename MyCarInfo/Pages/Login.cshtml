@@ -6,6 +6,8 @@
     ViewData["Title"] = "Login";
 }
 
+@(await Html.RenderComponentAsync<MyCarInfo.Shared.Header>(Microsoft.AspNetCore.Mvc.Rendering.RenderMode.ServerPrerendered))
+
 <section class="section auth">
     <div class="container auth__container grid">
 
