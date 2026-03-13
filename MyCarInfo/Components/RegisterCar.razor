@@ -8,7 +8,10 @@
 @inject NavigationManager Navigation
 @attribute [Authorize]
 
+
 <PageTitle>Register Car</PageTitle>
+
+<Header />
 
 <section class="section register-section">
     <div class="container">
@@ -124,22 +127,22 @@
     private static readonly string[] AllowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
 
     private readonly Dictionary<string, object> datePickerAttributes = new()
-        {
-            ["class"] = "input__field date-input",
-            ["onfocus"] = "this.showPicker()",
-            ["onclick"] = "this.showPicker()"
-        };
+    {
+        ["class"] = "input__field date-input",
+        ["onfocus"] = "this.showPicker()",
+        ["onclick"] = "this.showPicker()"
+    };
 
     private bool isLoading = false;
     private string? successMessage;
     private string? uploadError;
 
     private CarModel carModel = new()
-        {
-            InsuranceExpiryDate = DateTime.Today,
-            InspectionExpiryDate = DateTime.Today,
-            VignetteExpiryDate = DateTime.Today
-        };
+    {
+        InsuranceExpiryDate = DateTime.Today,
+        InspectionExpiryDate = DateTime.Today,
+        VignetteExpiryDate = DateTime.Today
+    };
 
     private async Task HandleValidSubmit()
     {
