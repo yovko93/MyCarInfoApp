@@ -11,15 +11,18 @@
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<NotificationBackgroundService> _logger;
         private readonly NotificationOptions _options;
+        private readonly IEmailNotificationService _emailNotificationService;
 
         public NotificationBackgroundService(
             IServiceScopeFactory scopeFactory,
             IOptions<NotificationOptions> options,
+            IEmailNotificationService emailNotificationService,
             ILogger<NotificationBackgroundService> logger)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
             _options = options.Value;
+            _emailNotificationService = emailNotificationService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -103,6 +106,7 @@
                 }
 
                 var message = BuildMessage(vehicle, documentType, expiryDate);
+                var subject = BuildSubject(vehicle, documentType, expiryDate);
 
                 var notification = new Notification
                 {
@@ -110,7 +114,7 @@
                     UserId = vehicle.UserId,
                     DocumentType = documentType,
                     ExpiryDate = expiryDate.Date,
-                    Channel = "",
+                    Channel = "Email",
                     Message = message,
                     IsSent = false,
                     CreatedAt = DateTime.UtcNow
@@ -125,19 +129,42 @@
                     documentType,
                     expiryDate);
 
-                //var result = await _viberNotificationService.SendViberNotificationAsync(vehicle.User, message, cancellationToken);
+                if (string.IsNullOrWhiteSpace(vehicle.User.Email))
+                {
+                    notification.ErrorMessage = "User email is missing.";
+                    await context.Notifications.AddAsync(notification, cancellationToken);
+                    await context.SaveChangesAsync(cancellationToken);
+                    return;
+                }
 
-                //notification.IsSent = result.Succeeded;
-                //notification.SentAt = result.Succeeded ? DateTime.UtcNow : null;
-                //notification.ErrorMessage = result.Error;
+                try
+                {
+                    await _emailNotificationService.SendAsync(vehicle.User.Email, subject, message, cancellationToken);
+                    notification.IsSent = true;
+                    notification.SentAt = DateTime.UtcNow;
+                }
+                catch (Exception sendEx)
+                {
+                    notification.ErrorMessage = sendEx.Message;
+                    _logger.LogError(sendEx,
+                        "Failed to send email for user {UserId}, vehicle {VehicleId}, document {DocumentType}.",
+                        vehicle.UserId,
+                        vehicle.Id,
+                        documentType);
+                }
 
-                //await context.Notifications.AddAsync(notification, cancellationToken);
-                //await context.SaveChangesAsync(cancellationToken);
+                await context.Notifications.AddAsync(notification, cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
             }
+        }
+
+        private static string BuildSubject(Vehicle vehicle, string documentType, DateTime expiryDate)
+        {
+            return $"MyCarInfo: {documentType} expires on {expiryDate:dd.MM.yyyy} ({vehicle.LicensePlate})";
         }
 
         private static string BuildMessage(Vehicle vehicle, string documentType, DateTime expiryDate)
