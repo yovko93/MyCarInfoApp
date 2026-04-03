@@ -23,25 +23,41 @@ namespace MyCarInfo.Services.Car
 
         public async Task<int> GetCarsCountAsync()
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            try
+            {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            return await context.Cars
-                .AsNoTracking()
-                .CountAsync(c => !c.IsDeleted);
+                return await context.Cars
+                   .AsNoTracking()
+                   .CountAsync(c => !c.IsDeleted);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load cars count. Returning 0.");
+                return 0;
+            }
         }
 
         public async Task<List<Vehicle>> GetAllCarsAsync()
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            try
+            {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            return await context.Cars
-                .Where(c => !c.IsDeleted)
-                .Include(c => c.Images)
-                .Include(c => c.User)
-                .AsNoTracking()
-                .ToListAsync();
+                return await context.Cars
+                    .Where(c => !c.IsDeleted)
+                    .Include(c => c.Images)
+                    .Include(c => c.User)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load all cars. Returning empty list.");
+                return new List<Vehicle>();
+            }
         }
 
         public async Task<List<Vehicle>> GetCurrentUserCarsAsync()
@@ -53,35 +69,51 @@ namespace MyCarInfo.Services.Car
                 return new List<Vehicle>();
             }
 
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var user = await userManager.GetUserAsync(httpContext.User);
-
-            if (user is null)
+            try
             {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = await userManager.GetUserAsync(httpContext.User);
+
+                if (user is null)
+                {
+                    return new List<Vehicle>();
+                }
+
+                return await context.Cars
+                     .Where(c => c.UserId == user.Id && !c.IsDeleted)
+                     .Include(c => c.Images)
+                     .Include(c => c.User)
+                     .AsNoTracking()
+                     .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load current user cars. Returning empty list.");
                 return new List<Vehicle>();
             }
-
-            return await context.Cars
-                .Where(c => c.UserId == user.Id && !c.IsDeleted)
-                .Include(c => c.Images)
-                .Include(c => c.User)
-                .AsNoTracking()
-                .ToListAsync();
         }
 
         public async Task<Vehicle?> GetCarByIdAsync(int id)
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            try
+            {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            return await context.Cars
-                .Where(c => !c.IsDeleted)
-                .Include(c => c.Images)
-                .Include(c => c.User)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+                return await context.Cars
+                    .Where(c => !c.IsDeleted)
+                    .Include(c => c.Images)
+                    .Include(c => c.User)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load car by id {CarId}. Returning null.", id);
+                return null;
+            }
         }
 
         public async Task AddCarAsync(CarModel carModel)
