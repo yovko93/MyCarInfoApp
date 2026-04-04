@@ -16,7 +16,10 @@ builder.Host.UseSerilog((context, services, configuration) =>
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAppPresentation();
 
-var dataProtectionKeysPath = builder.Configuration["DataProtection:KeysPath"] ?? "/root/.aspnet/DataProtection-Keys";
+var dataProtectionKeysPath = builder.Configuration["DataProtection:KeysPath"]
+    ?? (builder.Environment.IsDevelopment()
+        ? Path.Combine(builder.Environment.ContentRootPath, ".aspnet", "DataProtection-Keys")
+        : "/var/mycarinfo/dpkeys");
 Directory.CreateDirectory(dataProtectionKeysPath);
 builder.Services
     .AddDataProtection()

@@ -28,12 +28,12 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       DisableHttpsRedirection: "true"
-      DataProtection__KeysPath: "/root/.aspnet/DataProtection-Keys"
-      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=MyCarInfoDB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;Encrypt=False"
+      DataProtection__KeysPath: "/var/mycarinfo/dpkeys"
+      ConnectionStrings__DefaultConnection: "Server=tcp:db,1433;Database=MyCarInfoDB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;Encrypt=False"
     ports:
       - "8080:8080"
     volumes:
-      - app-dpkeys:/root/.aspnet/DataProtection-Keys
+       - app-dpkeys:/var/mycarinfo/dpkeys
 
 volumes:
   sql-data:
