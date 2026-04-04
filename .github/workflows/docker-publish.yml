@@ -1,0 +1,35 @@
+name: Build and Push Docker Image and Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Docker image
+        run: |
+          cd MyCarInfo
+          dotnet restore
+          dotnet publish -c Release -o out
+          cd ..
+          docker build -t yovko93/my-car-info-app:latest ./MyCarInfo
+
+      - name: Push Docker image
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+          docker push yovko93/my-car-info-app:latest
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
