@@ -36,3 +36,13 @@ jobs:
           context: ./MyCarInfo
           push: true
           tags: yovko93/my-car-info-app:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    steps:
+      - uses: joelwmale/webhook-action@master
+        name: Deploy to production
+        env:
+            WEBHOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL}}
