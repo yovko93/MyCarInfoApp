@@ -18,18 +18,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Build Docker image
+      - name: Build app artifacts
         run: |
           cd MyCarInfo
           dotnet restore
           dotnet publish -c Release -o out
-          cd ..
-          docker build -t yovko93/my-car-info-app:latest ./MyCarInfo
 
-      - name: Push Docker image
-        run: |
-          echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-          docker push yovko93/my-car-info-app:latest
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./MyCarInfo
+          push: true
+          tags: yovko93/my-car-info-app:latest
