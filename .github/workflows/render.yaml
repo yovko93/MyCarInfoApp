@@ -12,7 +12,7 @@ services:
       - key: DataProtection__KeysPath
         value: /var/mycarinfo/dpkeys
       - key: ConnectionStrings__DefaultConnection
-        value: Server=tcp:mycarinfo-db,1433;Database=MyCarInfoDB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;Encrypt=False
+        sync: false
     disk:
       name: mycarinfo-app-data
       mountPath: /var/mycarinfo
@@ -27,7 +27,7 @@ services:
       - key: ACCEPT_EULA
         value: "Y"
       - key: MSSQL_SA_PASSWORD
-        value: YourStrong!Passw0rd
+        sync: false
     disk:
       name: mycarinfo-sql-data
       mountPath: /var/opt/mssql
